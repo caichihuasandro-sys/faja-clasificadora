@@ -9,7 +9,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Fondo con la Facultad/Universidad + Capa oscura para mejor lectura */
+        /* Fondo con la Facultad (FIEE/UNMSM) + Capa oscura para legibilidad */
         body {
             background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), 
                         url('https://fiee.unmsm.edu.pe/images/home/Neutral%20Din%C3%A1mico%20Mis%20Momentos%20Favoritos%20Post%20para%20Instagram%20(45)%20(2).jpg');
@@ -30,7 +30,7 @@
                 <div class="flex items-center space-x-3">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFyPZljotNXDMHO7xBgxYp-TnKxkjimpkBp8Q5Z3sj-75ZwszbJleMBcbS&s=10" 
                          alt="Logo UNMSM" 
-                         class="h-16 w-auto bg-white/10 p-1 rounded-lg">
+                         class="h-16 w-auto bg-white/10 p-1 rounded-lg shadow">
                     <div>
                         <p class="text-xs font-semibold text-blue-200 tracking-wider">UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS</p>
                         <p class="text-xs text-blue-300">Universidad del Perú, Decana de América</p>
@@ -44,7 +44,10 @@
                 </div>
 
                 <!-- Logo FIEE -->
-                <div class="flex items-center space-x-2 bg-white/10 p-2 rounded-lg border border-white/20">
+                <div class="flex items-center space-x-3 bg-white/10 p-2 rounded-lg border border-white/20 shadow">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVkcjwlfETdGvS4icRF_k_z-1HpteapauoYadfqlQEr50V2zTyilL0aesn&s=10" 
+                         alt="Logo FIEE" 
+                         class="h-12 w-auto object-contain rounded">
                     <div class="text-right">
                         <span class="block text-sm font-extrabold text-amber-400">FIEE</span>
                         <span class="block text-[10px] text-slate-200 leading-tight">Facultad de Ingeniería<br>Electrónica y Eléctrica</span>
@@ -74,4 +77,273 @@
                 <button onclick="processInterpolation()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold text-sm transition shadow-md">Calcular Interpolación</button>
             </div>
 
-            <!-- Gráfico
+            <!-- Gráfico de Interpolación -->
+            <div class="md:col-span-2 bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">2. Curva de Calibración por Interpolación</h2>
+                <div class="h-64">
+                    <canvas id="interpolationChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados de Interpolación -->
+        <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200">
+            <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-3">Resultados del Polinomio de Interpolación</h2>
+            <div id="interpolationOutput" class="text-xs font-mono bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto shadow-inner">
+                Seleccione datos y presione "Calcular Interpolación".
+            </div>
+        </div>
+
+        <!-- Sección de Raíces -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200 space-y-4">
+                <h2 class="text-lg font-bold text-slate-700 border-b pb-2">3. Búsqueda de Raíces / Umbral</h2>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase">Ecuación Objetivo f(x) = 0</label>
+                    <input type="text" id="rootFunction" value="x^3 - 4*x - 9" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50 font-mono" placeholder="Ej: x^2 - 4">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase">Módulo x0 / a</label>
+                        <input type="number" id="paramA" value="2" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase">Módulo x1 / b</label>
+                        <input type="number" id="paramB" value="3" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
+                    </div>
+                </div>
+                <button onclick="processRoots()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-semibold text-sm transition shadow-md">Calcular Raíces</button>
+            </div>
+
+            <!-- Tabla de Raíces -->
+            <div class="md:col-span-2 bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-3">Comparativa de Métodos Iterativos</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left text-slate-600">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                            <tr>
+                                <th class="p-2">Método</th>
+                                <th class="p-2">Raíz Calculada</th>
+                                <th class="p-2">Iteraciones</th>
+                                <th class="p-2">Error Est.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rootsTableBody">
+                            <tr>
+                                <td colspan="4" class="p-3 text-center text-slate-400">Ejecute el cálculo de raíces para mostrar resultados.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script de Métodos Numéricos -->
+    <script>
+        let interpChart = null;
+
+        function loadSampleData() {
+            const sample = document.getElementById('sampleSelect').value;
+            const textarea = document.getElementById('pointsInput');
+            if (sample === 'red') {
+                textarea.value = "0, 5\n20, 45\n50, 110\n100, 210";
+            } else if (sample === 'green') {
+                textarea.value = "0, 2\n25, 30\n60, 85\n100, 160";
+            } else if (sample === 'blue') {
+                textarea.value = "0, 8\n30, 60\n70, 140\n100, 230";
+            }
+            processInterpolation();
+        }
+
+        function parsePoints(text) {
+            const lines = text.trim().split('\n');
+            const points = [];
+            for (let line of lines) {
+                const parts = line.split(',');
+                if (parts.length === 2) {
+                    const x = parseFloat(parts[0].trim());
+                    const y = parseFloat(parts[1].trim());
+                    if (!isNaN(x) && !isNaN(y)) {
+                        points.push({x, y});
+                    }
+                }
+            }
+            return points;
+        }
+
+        function lagrangeInterpolation(points, x) {
+            let total = 0;
+            const n = points.length;
+            for (let i = 0; i < n; i++) {
+                let xi = points[i].x;
+                let yi = points[i].y;
+                let term = yi;
+                for (let j = 0; j < n; j++) {
+                    if (j !== i) {
+                        term = term * (x - points[j].x) / (xi - points[j].x);
+                    }
+                }
+                total += term;
+            }
+            return total;
+        }
+
+        function processInterpolation() {
+            const text = document.getElementById('pointsInput').value;
+            const points = parsePoints(text);
+            if (points.length < 2) {
+                alert("Ingrese al menos 2 puntos válidos.");
+                return;
+            }
+
+            points.sort((a, b) => a.x - b.x);
+
+            const minX = points[0].x;
+            const maxX = points[points.length - 1].x;
+            const step = (maxX - minX) / 50;
+
+            const curveData = [];
+            for (let x = minX; x <= maxX; x += step) {
+                curveData.push({x: x, y: lagrangeInterpolation(points, x)});
+            }
+
+            const ctx = document.getElementById('interpolationChart').getContext('2d');
+            if (interpChart) interpChart.destroy();
+
+            interpChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Puntos Muestreados (Sensor TCS3200)',
+                            data: points,
+                            backgroundColor: 'rgba(239, 68, 68, 1)',
+                            pointRadius: 6
+                        },
+                        {
+                            label: 'Polinomio de Lagrange P(x)',
+                            data: curveData,
+                            showLine: true,
+                            borderColor: 'rgba(37, 99, 235, 1)',
+                            borderWidth: 2,
+                            fill: false,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Frecuencia Entrada (kHz)' } },
+                        y: { title: { display: true, text: 'Respuesta Sensor' } }
+                    }
+                }
+            });
+
+            document.getElementById('interpolationOutput').innerHTML = 
+                `Puntos leídos correctamente: ${points.length}\n` +
+                `Rango analizado: [${minX}, ${maxX}]\n` +
+                `Método Lagrange ejecutado exitosamente con evaluación suave.`;
+        }
+
+        function evalMath(funcStr, xVal) {
+            try {
+                let formatted = funcStr.replace(/x/g, `(${xVal})`).replace(/\^/g, '**');
+                return eval(formatted);
+            } catch (e) {
+                return NaN;
+            }
+        }
+
+        function processRoots() {
+            const funcStr = document.getElementById('rootFunction').value;
+            let a = parseFloat(document.getElementById('paramA').value);
+            let b = parseFloat(document.getElementById('paramB').value);
+
+            let tbody = document.getElementById('rootsTableBody');
+            tbody.innerHTML = "";
+
+            let bisectRes = bisection(funcStr, a, b);
+            let newtonRes = newtonRaphson(funcStr, (a + b) / 2);
+            let secantRes = secant(funcStr, a, b);
+
+            const results = [
+                { name: "Bisección", res: bisectRes },
+                { name: "Newton-Raphson", res: newtonRes },
+                { name: "Secante", res: secantRes }
+            ];
+
+            results.forEach(item => {
+                let row = `<tr class="border-b">
+                    <td class="p-2 font-semibold">${item.name}</td>
+                    <td class="p-2 font-mono">${isNaN(item.res.root) ? 'No converge' : item.res.root.toFixed(5)}</td>
+                    <td class="p-2">${item.res.iter}</td>
+                    <td class="p-2 font-mono">${isNaN(item.res.error) ? '-' : item.res.error.toExponential(3)}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function bisection(funcStr, a, b, tol = 1e-5, maxIter = 50) {
+            let fa = evalMath(funcStr, a);
+            let fb = evalMath(funcStr, b);
+            if (fa * fb > 0) return { root: NaN, iter: 0, error: NaN };
+
+            let c = a, err = 1, iter = 0;
+            while (err > tol && iter < maxIter) {
+                let cOld = c;
+                c = (a + b) / 2;
+                let fc = evalMath(funcStr, c);
+                if (fc === 0) break;
+
+                if (fa * fc < 0) { b = c; fb = fc; }
+                else { a = c; fa = fc; }
+
+                err = Math.abs(c - cOld);
+                iter++;
+            }
+            return { root: c, iter, error: err };
+        }
+
+        function newtonRaphson(funcStr, x0, tol = 1e-5, maxIter = 50) {
+            let x = x0, iter = 0, err = 1;
+            const h = 1e-5;
+            while (err > tol && iter < maxIter) {
+                let fx = evalMath(funcStr, x);
+                let dfx = (evalMath(funcStr, x + h) - evalMath(funcStr, x - h)) / (2 * h);
+                if (Math.abs(dfx) < 1e-12) break;
+
+                let xNext = x - (fx / dfx);
+                err = Math.abs(xNext - x);
+                x = xNext;
+                iter++;
+            }
+            return { root: x, iter, error: err };
+        }
+
+        function secant(funcStr, x0, x1, tol = 1e-5, maxIter = 50) {
+            let iter = 0, err = 1;
+            while (err > tol && iter < maxIter) {
+                let f0 = evalMath(funcStr, x0);
+                let f1 = evalMath(funcStr, x1);
+                if (Math.abs(f1 - f0) < 1e-12) break;
+
+                let xNext = x1 - f1 * (x1 - x0) / (f1 - f0);
+                err = Math.abs(xNext - x1);
+                x0 = x1;
+                x1 = xNext;
+                iter++;
+            }
+            return { root: x1, iter, error: err };
+        }
+
+        window.onload = function() {
+            processInterpolation();
+            processRoots();
+        };
+    </script>
+</body>
+</html>
