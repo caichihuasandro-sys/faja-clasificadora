@@ -11,244 +11,303 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans p-6">
     <div class="max-w-6xl mx-auto space-y-6">
-        
-        <!-- Header -->
+
+        <!-- Encabezado -->
         <header class="bg-blue-900 text-white p-6 rounded-xl shadow-md">
             <h1 class="text-2xl font-bold">Sistema de Clasificación por Color en Faja Transportadora</h1>
             <p class="text-blue-200 text-sm mt-1">Plataforma de Métodos Numéricos: Interpolación (Lagrange, Newton, Matricial) y Raíces (Bisección, Newton-Raphson, Secante)</p>
         </header>
 
-        <!-- Carga de Archivo CSV -->
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 class="text-lg font-semibold text-slate-700 mb-3">1. Carga de Datos de Sensores (.CSV)</h2>
-            <div class="flex items-center gap-4">
-                <input type="file" id="csvFile" accept=".csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
-                <button onclick="procesarDefault()" class="bg-slate-600 text-white px-4 py-2 rounded-md hover:bg-slate-700 text-sm font-medium whitespace-nowrap">Cargar Datos de Prueba</button>
+        <!-- Panel de Control / Sensores -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-5 rounded-xl shadow border border-slate-200 space-y-4">
+                <h2 class="text-lg font-bold text-slate-700 border-b pb-2">1. Entrada de Datos (Sensor TCS3200)</h2>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase">Seleccionar Objeto Detectado</label>
+                    <select id="sampleSelect" class="mt-1 w-full p-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 text-sm" onchange="loadSampleData()">
+                        <option value="red">Objeto Rojo (Muestra A)</option>
+                        <option value="green">Objeto Verde (Muestra B)</option>
+                        <option value="blue">Objeto Azul (Muestra C)</option>
+                        <option value="custom">Entrada Personalizada</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Puntos de Calibración Frecuencia (kHz) vs Frecuencia de Salida</label>
+                    <textarea id="pointsInput" class="w-full h-24 p-2 border rounded-lg text-xs font-mono bg-slate-50" placeholder="x,y (un punto por línea)">0, 10&#10;20, 35&#10;50, 80&#10;100, 150</textarea>
+                </div>
+                <button onclick="processInterpolation()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold text-sm transition">Calcular Interpolación</button>
             </div>
-            <p class="text-xs text-slate-400 mt-2">Formato esperado: dos columnas <code>tiempo_ms, respuesta_color</code> o pares ordenados <code>(x, y)</code>.</p>
-        </section>
 
-        <!-- Métodos Numéricos -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            <!-- Bloque 1: Interpolación Polinomial -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                <h2 class="text-lg font-semibold text-blue-700 border-b pb-2">2. Calibración del Sensor (Interpolación)</h2>
-                <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">Método de Interpolación:</label>
-                    <select id="metodoInterp" class="w-full p-2 border border-slate-300 rounded-md text-sm">
-                        <option value="lagrange">Polinomios de Lagrange</option>
-                        <option value="newton">Diferencias Divididas de Newton</option>
-                        <option value="matricial">Método Matricial (Vandermonde)</option>
-                    </select>
+            <!-- Gráfico de Interpolación -->
+            <div class="md:col-span-2 bg-white p-5 rounded-xl shadow border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">2. Curva de Calibración por Interpolación</h2>
+                <div class="h-64">
+                    <canvas id="interpolationChart"></canvas>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">Evaluar en $x$ ($t$ en ms):</label>
-                    <input type="number" id="xEval" value="3.5" step="0.1" class="w-full p-2 border border-slate-300 rounded-md text-sm"/>
-                </div>
-                <button onclick="ejecutarInterpolacion()" class="w-full bg-blue-600 text-white py-2 rounded-md font-medium hover:bg-blue-700 transition">Calcular Curva de Calibración</button>
-                <div id="outInterp" class="p-3 bg-slate-50 border rounded-md text-sm font-mono text-slate-700">Esperando cálculo...</div>
-            </section>
-
-            <!-- Bloque 2: Raíces de Ecuaciones -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                <h2 class="text-lg font-semibold text-emerald-700 border-b pb-2">3. Detección de Posición (Raíces de $f(x)=0$)</h2>
-                <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">Umbral Objetivo de Color $C_{target}$:</label>
-                    <input type="number" id="vRef" value="0.0" step="0.1" class="w-full p-2 border border-slate-300 rounded-md text-sm"/>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">Método de Solución:</label>
-                    <select id="metodoRaiz" class="w-full p-2 border border-slate-300 rounded-md text-sm">
-                        <option value="biseccion">Método de Bisección (Cerrado)</option>
-                        <option value="newton_raphson">Newton-Raphson (Abierto)</option>
-                        <option value="secante">Método de la Secante (Abierto)</option>
-                    </select>
-                </div>
-                <button onclick="ejecutarRaices()" class="w-full bg-emerald-600 text-white py-2 rounded-md font-medium hover:bg-emerald-700 transition">Calcular Tiempo $t^*$ de Activación</button>
-                <div id="outRaiz" class="p-3 bg-slate-50 border rounded-md text-sm font-mono text-slate-700">Esperando cálculo...</div>
-            </section>
-
+            </div>
         </div>
 
-        <!-- Gráfica Interactiva -->
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 class="text-lg font-semibold text-slate-700 mb-4">Perfil Continuo de Respuesta del Sensor en la Faja</h2>
-            <div class="relative h-80 w-full">
-                <canvas id="chartFaja"></canvas>
+        <!-- Resultados de Interpolación -->
+        <div class="bg-white p-5 rounded-xl shadow border border-slate-200">
+            <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-3">Resultados del Polinomio de Interpolación</h2>
+            <div id="interpolationOutput" class="text-xs font-mono bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto">
+                Seleccione datos y presione "Calcular Interpolación".
             </div>
-        </section>
+        </div>
+
+        <!-- Sección de Raíces para Punto Crítico / Calibración -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-5 rounded-xl shadow border border-slate-200 space-y-4">
+                <h2 class="text-lg font-bold text-slate-700 border-b pb-2">3. Búsqueda de Raíces / Umbral</h2>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase">Ecuación Objetivo f(x) = 0</label>
+                    <input type="text" id="rootFunction" value="x^3 - 4*x - 9" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50 font-mono" placeholder="Ej: x^2 - 4">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase">Módulo x0 / a</label>
+                        <input type="number" id="paramA" value="2" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase">Módulo x1 / b</label>
+                        <input type="number" id="paramB" value="3" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
+                    </div>
+                </div>
+                <button onclick="processRoots()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-semibold text-sm transition">Calcular Raíces</button>
+            </div>
+
+            <!-- Salida de Raíces -->
+            <div class="md:col-span-2 bg-white p-5 rounded-xl shadow border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-3">Comparativa de Métodos Iterativos</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left text-slate-600">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                            <tr>
+                                <th class="p-2">Método</th>
+                                <th class="p-2">Raíz Calculada</th>
+                                <th class="p-2">Iteraciones</th>
+                                <th class="p-2">Error Est.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rootsTableBody">
+                            <tr>
+                                <td colspan="4" class="p-3 text-center text-slate-400">Ejecute el cálculo de raíces para mostrar resultados.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
     </div>
 
-    <!-- JavaScript Lógica Numérica -->
+    <!-- Scripts de Cálculo Numérico -->
     <script>
-        let rawData = [
-            { x: 1.5, y: -5 },
-            { x: 2.7, y: 2 },
-            { x: 5.6, y: -2 },
-            { x: 7.2, y: 10 }
-        ];
-        let myChart = null;
+        let interpChart = null;
 
-        window.onload = function() {
-            renderChart(rawData, []);
-            document.getElementById('csvFile').addEventListener('change', handleFileSelect, false);
-        };
-
-        function procesarDefault() {
-            renderChart(rawData, []);
-            document.getElementById('outInterp').innerText = "Cargados 4 puntos de prueba.";
+        function loadSampleData() {
+            const sample = document.getElementById('sampleSelect').value;
+            const textarea = document.getElementById('pointsInput');
+            if (sample === 'red') {
+                textarea.value = "0, 5\n20, 45\n50, 110\n100, 210";
+            } else if (sample === 'green') {
+                textarea.value = "0, 2\n25, 30\n60, 85\n100, 160";
+            } else if (sample === 'blue') {
+                textarea.value = "0, 8\n30, 60\n70, 140\n100, 230";
+            }
         }
 
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const lines = e.target.result.split('\n');
-                let parsed = [];
-                for(let i=0; i<lines.length; i++){
-                    const cols = lines[i].split(',');
-                    if(cols.length >= 2){
-                        let px = parseFloat(cols[0]);
-                        let py = parseFloat(cols[1]);
-                        if(!isNaN(px) && !isNaN(py)) parsed.push({x: px, y: py});
+        function parsePoints(text) {
+            const lines = text.trim().split('\n');
+            const points = [];
+            for (let line of lines) {
+                const parts = line.split(',');
+                if (parts.length === 2) {
+                    const x = parseFloat(parts[0].trim());
+                    const y = parseFloat(parts[1].trim());
+                    if (!isNaN(x) && !isNaN(y)) {
+                        points.push({x, y});
                     }
                 }
-                if(parsed.length > 0){
-                    rawData = parsed.sort((a,b) => a.x - b.x);
-                    renderChart(rawData, []);
-                    alert("Archivo CSV cargado con éxito.");
-                }
-            };
-            reader.readAsText(file);
+            }
+            return points;
         }
 
-        function interpLagrange(x, data) {
-            let n = data.length, sum = 0;
+        function lagrangeInterpolation(points, x) {
+            let total = 0;
+            const n = points.length;
             for (let i = 0; i < n; i++) {
-                let term = data[i].y;
+                let xi = points[i].x;
+                let yi = points[i].y;
+                let term = yi;
                 for (let j = 0; j < n; j++) {
-                    if (i !== j) term *= (x - data[j].x) / (data[i].x - data[j].x);
+                    if (j !== i) {
+                        term = term * (x - points[j].x) / (xi - points[j].x);
+                    }
                 }
-                sum += term;
+                total += term;
             }
-            return sum;
+            return total;
         }
 
-        function ejecutarInterpolacion() {
-            let metodo = document.getElementById('metodoInterp').value;
-            let valX = parseFloat(document.getElementById('xEval').value);
-            let yEval = interpLagrange(valX, rawData);
+        function processInterpolation() {
+            const text = document.getElementById('pointsInput').value;
+            const points = parsePoints(text);
+            if (points.length < 2) {
+                alert("Ingrese al menos 2 puntos válidos.");
+                return;
+            }
 
-            document.getElementById('outInterp').innerHTML = 
-                `<strong>Resultado (${metodo.toUpperCase()}):</strong><br>P(${valX}) = <strong>${yEval.toFixed(6)}</strong>`;
+            points.sort((a, b) => a.x - b.x);
 
-            let curveData = [];
-            let minX = rawData[0].x, maxX = rawData[rawData.length - 1].x;
-            let step = (maxX - minX) / 150;
+            const minX = points[0].x;
+            const maxX = points[points.length - 1].x;
+            const step = (maxX - minX) / 50;
 
+            const curveData = [];
             for (let x = minX; x <= maxX; x += step) {
-                curveData.push({ x: x, y: interpLagrange(x, rawData) });
-            }
-            renderChart(rawData, curveData, { x: valX, y: yEval });
-        }
-
-        function ejecutarRaices() {
-            let vRef = parseFloat(document.getElementById('vRef').value);
-            let metodo = document.getElementById('metodoRaiz').value;
-            let f = (t) => interpLagrange(t, rawData) - vRef;
-
-            let root = null, iters = 0;
-            let a = rawData[0].x, b = rawData[rawData.length - 1].x;
-
-            if (metodo === 'biseccion') {
-                let tol = 1e-5, maxIter = 100;
-                if (f(a) * f(b) > 0) {
-                    document.getElementById('outRaiz').innerHTML = `<span class="text-red-600">Error: f(a) y f(b) tienen el mismo signo.</span>`;
-                    return;
-                }
-                while ((b - a) / 2 > tol && iters < maxIter) {
-                    let c = (a + b) / 2;
-                    if (f(c) === 0) { a = b = c; break; }
-                    if (f(a) * f(c) < 0) b = c; else a = c;
-                    iters++;
-                }
-                root = (a + b) / 2;
-            } else if (metodo === 'secante') {
-                let x0 = a, x1 = b, tol = 1e-5;
-                while (iters < 100) {
-                    let f0 = f(x0), f1 = f(x1);
-                    if (Math.abs(f1 - f0) < 1e-9) break;
-                    let x2 = x1 - f1 * (x1 - x0) / (f1 - f0);
-                    if (Math.abs(x2 - x1) < tol) { root = x2; break; }
-                    x0 = x1; x1 = x2; iters++;
-                }
-                root = x1;
-            } else { // Newton-Raphson
-                let x0 = (a + b) / 2, tol = 1e-5, h = 1e-4;
-                while (iters < 100) {
-                    let fx = f(x0);
-                    let dfx = (f(x0 + h) - f(x0 - h)) / (2 * h);
-                    let x1 = x0 - fx / dfx;
-                    if (Math.abs(x1 - x0) < tol) { root = x1; break; }
-                    x0 = x1; iters++;
-                }
-                root = x0;
+                curveData.push({x: x, y: lagrangeInterpolation(points, x)});
             }
 
-            document.getElementById('outRaiz').innerHTML = 
-                `<strong>Cruce Registrado (${metodo.toUpperCase()}):</strong><br>` +
-                `Tiempo t* = <strong>${root.toFixed(4)} ms</strong><br>` +
-                `Iteraciones = ${iters}`;
-        }
+            // Actualizar Gráfico
+            const ctx = document.getElementById('interpolationChart').getContext('2d');
+            if (interpChart) interpChart.destroy();
 
-        function renderChart(points, curve, evalPoint = null) {
-            const ctx = document.getElementById('chartFaja').getContext('2d');
-            if (myChart) myChart.destroy();
-
-            let datasets = [{
-                label: 'Mediciones del Sensor (CSV)',
-                data: points,
-                backgroundColor: 'rgba(239, 68, 68, 1)',
-                pointRadius: 6,
-                showLine: false
-            }];
-
-            if (curve.length > 0) {
-                datasets.push({
-                    label: 'Perfil Continuo Interpolado',
-                    data: curve,
-                    borderColor: 'rgba(37, 99, 235, 1)',
-                    borderWidth: 2,
-                    showLine: true,
-                    pointRadius: 0
-                });
-            }
-
-            if (evalPoint) {
-                datasets.push({
-                    label: 'Punto de Interés',
-                    data: [evalPoint],
-                    backgroundColor: 'rgba(16, 185, 129, 1)',
-                    pointRadius: 8
-                });
-            }
-
-            myChart = new Chart(ctx, {
+            interpChart = new Chart(ctx, {
                 type: 'scatter',
-                data: { datasets: datasets },
+                data: {
+                    datasets: [
+                        {
+                            label: 'Puntos Muestreados (Sensor)',
+                            data: points,
+                            backgroundColor: 'rgba(239, 68, 68, 1)',
+                            pointRadius: 6
+                        },
+                        {
+                            label: 'Polinomio de Lagrange P(x)',
+                            data: curveData,
+                            showLine: true,
+                            borderColor: 'rgba(37, 99, 235, 1)',
+                            borderWidth: 2,
+                            fill: false,
+                            pointRadius: 0
+                        }
+                    ]
+                },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Tiempo (ms)' } },
-                        y: { title: { display: true, text: 'Respuesta de Color' } }
+                        x: { title: { display: true, text: 'Frecuencia Entrada (kHz)' } },
+                        y: { title: { display: true, text: 'Respuesta Sensor' } }
                     }
                 }
             });
+
+            document.getElementById('interpolationOutput').innerHTML = 
+                `Puntos leídos correctamente: ${points.length}\n` +
+                `Rango analizado: [${minX}, ${maxX}]\n` +
+                `Método Lagrange ejecutado exitosamente con evaluación suave.`;
         }
+
+        function evalMath(funcStr, xVal) {
+            try {
+                let formatted = funcStr.replace(/x/g, `(${xVal})`).replace(/\^/g, '**');
+                return eval(formatted);
+            } catch (e) {
+                return NaN;
+            }
+        }
+
+        function processRoots() {
+            const funcStr = document.getElementById('rootFunction').value;
+            let a = parseFloat(document.getElementById('paramA').value);
+            let b = parseFloat(document.getElementById('paramB').value);
+
+            let tbody = document.getElementById('rootsTableBody');
+            tbody.innerHTML = "";
+
+            // 1. Bisección
+            let bisectRes = bisection(funcStr, a, b);
+            // 2. Newton Raphson
+            let newtonRes = newtonRaphson(funcStr, (a + b) / 2);
+            // 3. Secante
+            let secantRes = secant(funcStr, a, b);
+
+            const results = [
+                { name: "Bisección", res: bisectRes },
+                { name: "Newton-Raphson", res: newtonRes },
+                { name: "Secante", res: secantRes }
+            ];
+
+            results.forEach(item => {
+                let row = `<tr class="border-b">
+                    <td class="p-2 font-semibold">${item.name}</td>
+                    <td class="p-2 font-mono">${isNaN(item.res.root) ? 'No converge' : item.res.root.toFixed(5)}</td>
+                    <td class="p-2">${item.res.iter}</td>
+                    <td class="p-2 font-mono">${isNaN(item.res.error) ? '-' : item.res.error.toExponential(3)}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function bisection(funcStr, a, b, tol = 1e-5, maxIter = 50) {
+            let fa = evalMath(funcStr, a);
+            let fb = evalMath(funcStr, b);
+            if (fa * fb > 0) return { root: NaN, iter: 0, error: NaN };
+
+            let c = a, err = 1, iter = 0;
+            while (err > tol && iter < maxIter) {
+                let cOld = c;
+                c = (a + b) / 2;
+                let fc = evalMath(funcStr, c);
+                if (fc === 0) break;
+
+                if (fa * fc < 0) { b = c; fb = fc; }
+                else { a = c; fa = fc; }
+
+                err = Math.abs(c - cOld);
+                iter++;
+            }
+            return { root: c, iter, error: err };
+        }
+
+        function newtonRaphson(funcStr, x0, tol = 1e-5, maxIter = 50) {
+            let x = x0, iter = 0, err = 1;
+            const h = 1e-5;
+            while (err > tol && iter < maxIter) {
+                let fx = evalMath(funcStr, x);
+                let dfx = (evalMath(funcStr, x + h) - evalMath(funcStr, x - h)) / (2 * h);
+                if (Math.abs(dfx) < 1e-12) break;
+
+                let xNext = x - (fx / dfx);
+                err = Math.abs(xNext - x);
+                x = xNext;
+                iter++;
+            }
+            return { root: x, iter, error: err };
+        }
+
+        function secant(funcStr, x0, x1, tol = 1e-5, maxIter = 50) {
+            let iter = 0, err = 1;
+            while (err > tol && iter < maxIter) {
+                let f0 = evalMath(funcStr, x0);
+                let f1 = evalMath(funcStr, x1);
+                if (Math.abs(f1 - f0) < 1e-12) break;
+
+                let xNext = x1 - f1 * (x1 - x0) / (f1 - f0);
+                err = Math.abs(xNext - x1);
+                x0 = x1;
+                x1 = xNext;
+                iter++;
+            }
+            return { root: x1, iter, error: err };
+        }
+
+        window.onload = function() {
+            processInterpolation();
+            processRoots();
+        };
     </script>
 </body>
 </html>
