@@ -40,7 +40,7 @@
                 <!-- Título Central del Proyecto -->
                 <div class="text-center md:text-left flex-1 md:mx-6 border-t md:border-t-0 md:border-l border-blue-700/60 pt-3 md:pt-0 md:pl-6">
                     <h1 class="text-xl md:text-2xl font-bold text-white">Sistema de Clasificación por Color en Faja Transportadora</h1>
-                    <p class="text-blue-200 text-xs mt-1">Plataforma de Métodos Numéricos: Interpolación (Lagrange, Newton, Matricial) y Raíces (Bisección, Newton-Raphson, Secante)</p>
+                    <p class="text-blue-200 text-xs mt-1">Plataforma de Métodos Numéricos: Interpolación y 5 Métodos Iterativos de Raíces</p>
                 </div>
 
                 <!-- Logo FIEE -->
@@ -94,30 +94,30 @@
             </div>
         </div>
 
-        <!-- Sección de Raíces -->
+        <!-- Sección de Raíces con los 5 Métodos -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200 space-y-4">
                 <h2 class="text-lg font-bold text-slate-700 border-b pb-2">3. Búsqueda de Raíces / Umbral</h2>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 uppercase">Ecuación Objetivo f(x) = 0</label>
-                    <input type="text" id="rootFunction" value="x^3 - 4*x - 9" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50 font-mono" placeholder="Ej: x^2 - 4">
+                    <input type="text" id="rootFunction" value="x^3 - 4*x - 9" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50 font-mono" placeholder="Ej: x^3 - 4*x - 9">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase">Módulo x0 / a</label>
-                        <input type="number" id="paramA" value="2" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase">Intervalo a / x0</label>
+                        <input type="number" id="paramA" value="2" step="any" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase">Módulo x1 / b</label>
-                        <input type="number" id="paramB" value="3" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase">Intervalo b / x1</label>
+                        <input type="number" id="paramB" value="3" step="any" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
                     </div>
                 </div>
-                <button onclick="processRoots()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-semibold text-sm transition shadow-md">Calcular Raíces</button>
+                <button onclick="processRoots()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-semibold text-sm transition shadow-md">Calcular Raíces (5 Métodos)</button>
             </div>
 
-            <!-- Tabla de Raíces -->
+            <!-- Tabla Comparativa para los 5 Métodos -->
             <div class="md:col-span-2 bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-3">Comparativa de Métodos Iterativos</h2>
+                <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-3">Comparativa de Métodos Iterativos (5 Algoritmos)</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-xs text-left text-slate-600">
                         <thead class="text-xs text-slate-700 uppercase bg-slate-100">
@@ -130,7 +130,7 @@
                         </thead>
                         <tbody id="rootsTableBody">
                             <tr>
-                                <td colspan="4" class="p-3 text-center text-slate-400">Ejecute el cálculo de raíces para mostrar resultados.</td>
+                                <td colspan="4" class="p-3 text-center text-slate-400">Ejecute el cálculo de raíces para mostrar los 5 métodos.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -258,35 +258,9 @@
             }
         }
 
-        function processRoots() {
-            const funcStr = document.getElementById('rootFunction').value;
-            let a = parseFloat(document.getElementById('paramA').value);
-            let b = parseFloat(document.getElementById('paramB').value);
+        /* ----- ALGORITMOS DE LOS 5 MÉTODOS DE RAÍCES ----- */
 
-            let tbody = document.getElementById('rootsTableBody');
-            tbody.innerHTML = "";
-
-            let bisectRes = bisection(funcStr, a, b);
-            let newtonRes = newtonRaphson(funcStr, (a + b) / 2);
-            let secantRes = secant(funcStr, a, b);
-
-            const results = [
-                { name: "Bisección", res: bisectRes },
-                { name: "Newton-Raphson", res: newtonRes },
-                { name: "Secante", res: secantRes }
-            ];
-
-            results.forEach(item => {
-                let row = `<tr class="border-b">
-                    <td class="p-2 font-semibold">${item.name}</td>
-                    <td class="p-2 font-mono">${isNaN(item.res.root) ? 'No converge' : item.res.root.toFixed(5)}</td>
-                    <td class="p-2">${item.res.iter}</td>
-                    <td class="p-2 font-mono">${isNaN(item.res.error) ? '-' : item.res.error.toExponential(3)}</td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-        }
-
+        // 1. Método de Bisección
         function bisection(funcStr, a, b, tol = 1e-5, maxIter = 50) {
             let fa = evalMath(funcStr, a);
             let fb = evalMath(funcStr, b);
@@ -308,6 +282,42 @@
             return { root: c, iter, error: err };
         }
 
+        // 2. Método de Regula Falsi (Regla de la Falsa Posición)
+        function regulaFalsi(funcStr, a, b, tol = 1e-5, maxIter = 50) {
+            let fa = evalMath(funcStr, a);
+            let fb = evalMath(funcStr, b);
+            if (fa * fb > 0) return { root: NaN, iter: 0, error: NaN };
+
+            let c = a, err = 1, iter = 0;
+            while (err > tol && iter < maxIter) {
+                let cOld = c;
+                c = b - (fb * (b - a)) / (fb - fa);
+                let fc = evalMath(funcStr, c);
+                if (fc === 0) break;
+
+                if (fa * fc < 0) { b = c; fb = fc; }
+                else { a = c; fa = fc; }
+
+                err = Math.abs(c - cOld);
+                iter++;
+            }
+            return { root: c, iter, error: err };
+        }
+
+        // 3. Método de Punto Fijo (Despeje g(x) = (4x + 9)^(1/3))
+        function fixedPoint(funcStr, x0, tol = 1e-5, maxIter = 50) {
+            let x = x0, iter = 0, err = 1;
+            while (err > tol && iter < maxIter) {
+                let gx = Math.cbrt(4 * x + 9); // g(x) derivada implícitamente de x^3 - 4x - 9 = 0
+                if (isNaN(gx)) break;
+                err = Math.abs(gx - x);
+                x = gx;
+                iter++;
+            }
+            return { root: x, iter, error: err };
+        }
+
+        // 4. Método de Newton-Raphson
         function newtonRaphson(funcStr, x0, tol = 1e-5, maxIter = 50) {
             let x = x0, iter = 0, err = 1;
             const h = 1e-5;
@@ -324,6 +334,7 @@
             return { root: x, iter, error: err };
         }
 
+        // 5. Método de la Secante
         function secant(funcStr, x0, x1, tol = 1e-5, maxIter = 50) {
             let iter = 0, err = 1;
             while (err > tol && iter < maxIter) {
@@ -338,6 +349,39 @@
                 iter++;
             }
             return { root: x1, iter, error: err };
+        }
+
+        function processRoots() {
+            const funcStr = document.getElementById('rootFunction').value;
+            let a = parseFloat(document.getElementById('paramA').value);
+            let b = parseFloat(document.getElementById('paramB').value);
+
+            let tbody = document.getElementById('rootsTableBody');
+            tbody.innerHTML = "";
+
+            let bisectRes = bisection(funcStr, a, b);
+            let regulaRes = regulaFalsi(funcStr, a, b);
+            let fixedRes  = fixedPoint(funcStr, (a + b) / 2);
+            let newtonRes = newtonRaphson(funcStr, (a + b) / 2);
+            let secantRes = secant(funcStr, a, b);
+
+            const results = [
+                { name: "Bisección", res: bisectRes },
+                { name: "Regula Falsi", res: regulaRes },
+                { name: "Punto Fijo", res: fixedRes },
+                { name: "Newton-Raphson", res: newtonRes },
+                { name: "Secante", res: secantRes }
+            ];
+
+            results.forEach(item => {
+                let row = `<tr class="border-b hover:bg-slate-50 transition">
+                    <td class="p-2 font-semibold text-slate-800">${item.name}</td>
+                    <td class="p-2 font-mono text-blue-700">${isNaN(item.res.root) ? 'No converge' : item.res.root.toFixed(5)}</td>
+                    <td class="p-2 text-slate-600">${item.res.iter}</td>
+                    <td class="p-2 font-mono text-emerald-600">${isNaN(item.res.error) ? '-' : item.res.error.toExponential(3)}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
         }
 
         window.onload = function() {
