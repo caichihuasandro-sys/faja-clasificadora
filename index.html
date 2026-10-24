@@ -8,11 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- MathJax para fórmulas matemáticas -->
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
-            background: linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.82)), 
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), 
                         url('https://fiee.unmsm.edu.pe/images/home/Neutral%20Din%C3%A1mico%20Mis%20Momentos%20Favoritos%20Post%20para%20Instagram%20(45)%20(2).jpg');
             background-size: cover;
             background-position: center;
@@ -23,7 +21,7 @@
 <body class="text-slate-800 font-sans p-4 md:p-6 min-h-screen">
     <div class="max-w-5xl mx-auto space-y-6">
 
-        <!-- Encabezado Institucional FIEE -->
+        <!-- Encabezado Institucional FIEE / UNMSM -->
         <header class="bg-white/95 backdrop-blur-md p-6 rounded-xl shadow-xl border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center space-x-3">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFyPZljotNXDMHO7xBgxYp-TnKxkjimpkBp8Q5Z3sj-75ZwszbJleMBcbS&s=10" alt="UNMSM" class="h-14 w-auto">
@@ -40,13 +38,12 @@
         <!-- Presentación -->
         <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow border border-slate-200">
             <h2 class="text-lg font-bold text-slate-800">MÉTODOS NUMÉRICOS</h2>
-            <p class="text-xs text-slate-600 mt-1">Herramienta académica para importar datos experimentales, aplicar métodos numéricos y desplegar procedimientos detallados paso a paso.</p>
+            <p class="text-xs text-slate-600 mt-1">Plataforma académica para la importación de datos, cálculo de interpolación por Lagrange y resolución de ecuaciones mediante 5 métodos iterativos.</p>
         </div>
 
         <!-- 1. Importación de Datos -->
         <div class="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow border border-slate-200 space-y-4">
-            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">Importación de datos</h2>
-            <p class="text-xs text-slate-500">Selecciona un archivo CSV o TXT que contenga las mediciones del sensor.</p>
+            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">1. Importación de datos (.csv / .txt)</h2>
             
             <div class="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 rounded-lg border border-dashed border-slate-300">
                 <input type="file" id="fileInput" accept=".csv, .txt" class="hidden" onchange="handleFileSelect(event)">
@@ -58,27 +55,27 @@
 
         <!-- 2. Área de Trabajo -->
         <div id="workspaceSection" class="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow border border-slate-200 space-y-4">
-            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">Área de Trabajo</h2>
+            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">2. Área de Trabajo</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Variable independiente ($x$)</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Variable independiente (X)</label>
                     <select id="selectX" class="w-full p-2 text-xs border rounded-lg bg-slate-50 font-mono" onchange="updateTableAndCalculate()"></select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Variable dependiente ($y$)</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Variable dependiente (Y)</label>
                     <select id="selectY" class="w-full p-2 text-xs border rounded-lg bg-slate-50 font-mono" onchange="updateTableAndCalculate()"></select>
                 </div>
             </div>
 
             <!-- Tabla de Datos Importados -->
-            <div class="overflow-x-auto border rounded-lg max-h-56">
+            <div class="overflow-x-auto border rounded-lg max-h-52">
                 <table class="w-full text-xs text-left text-slate-600">
                     <thead class="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0">
                         <tr>
                             <th class="p-2 border-b">Fila</th>
-                            <th class="p-2 border-b" id="thX">x</th>
-                            <th class="p-2 border-b" id="thY">y</th>
-                            <th class="p-2 border-b">Validación</th>
+                            <th class="p-2 border-b" id="thX">X</th>
+                            <th class="p-2 border-b" id="thY">Y</th>
+                            <th class="p-2 border-b">Estado</th>
                         </tr>
                     </thead>
                     <tbody id="dataTableBody"></tbody>
@@ -86,13 +83,13 @@
             </div>
         </div>
 
-        <!-- 3. Métodos de Interpolación (Con Procedimiento Completo) -->
+        <!-- 3. Interpolación por Lagrange -->
         <div class="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow border border-slate-200 space-y-4">
-            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">1. Interpolación por Polinomio de Lagrange</h2>
+            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">3. Interpolación por Polinomio de Lagrange</h2>
 
             <div class="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 rounded-lg border">
                 <div class="w-full sm:w-auto">
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Valor de $x$ a evaluar:</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Valor de X a evaluar:</label>
                     <input type="number" id="evalX" value="7.5" step="any" class="p-2 text-xs border rounded-lg w-full sm:w-32 font-mono">
                 </div>
                 <button onclick="calculateLagrange()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 px-5 rounded-lg transition shadow mt-auto">Calcular Interpolación</button>
@@ -103,49 +100,42 @@
                 <h3 class="text-xl font-extrabold text-amber-900 font-mono" id="resVal">P(7.5) = --</h3>
             </div>
 
-            <!-- Procedimiento Lagrange Paso a Paso -->
+            <!-- Procedimiento de Interpolación en Formato Texto Claro -->
             <div class="space-y-3 pt-2">
-                <h3 class="text-sm font-bold text-slate-700 border-b pb-1">Procedimiento de Interpolación paso a paso</h3>
-
-                <div class="bg-slate-50 p-3 rounded-lg text-xs space-y-2 border">
-                    <p class="font-bold text-slate-700">1. Fórmula general de Lagrange</p>
-                    <div class="text-center py-1">
-                        $$P(x) = \sum_{i=0}^{n} y_i L_i(x) \quad \text{donde} \quad L_i(x) = \prod_{j=0, j \neq i}^{n} \frac{x - x_j}{x_i - x_j}$$
-                    </div>
-                </div>
+                <h3 class="text-sm font-bold text-slate-700 border-b pb-1">Procedimiento paso a paso</h3>
 
                 <div class="bg-slate-50 p-3 rounded-lg text-xs space-y-1 border">
-                    <p class="font-bold text-slate-700 mb-1">2. Puntos utilizados</p>
+                    <p class="font-bold text-slate-700 mb-1">1. Puntos experimentales utilizados</p>
                     <div id="usedPoints" class="flex flex-wrap gap-2 font-mono text-[11px]"></div>
                 </div>
 
                 <div class="bg-slate-50 p-3 rounded-lg text-xs space-y-2 border">
-                    <p class="font-bold text-slate-700">3. Evaluación de cada base $L_i(x)$ y sustitución</p>
+                    <p class="font-bold text-slate-700">2. Cálculo de bases Lagrange L_i(x) y sustitución</p>
                     <div id="baseEvaluations" class="space-y-3 font-mono text-[11px]"></div>
                 </div>
 
                 <div class="bg-slate-50 p-3 rounded-lg text-xs space-y-1 border">
-                    <p class="font-bold text-slate-700">4. Suma de los términos calculados</p>
+                    <p class="font-bold text-slate-700">3. Suma total de los términos</p>
                     <div id="termsSum" class="font-mono text-[11px] overflow-x-auto py-1"></div>
                 </div>
             </div>
 
             <div class="space-y-2 pt-4">
-                <h3 class="text-sm font-bold text-slate-700">Gráfica de Interpolación</h3>
+                <h3 class="text-sm font-bold text-slate-700">Gráfica del Polinomio de Interpolación</h3>
                 <div class="h-72 border rounded-lg p-2 bg-white">
                     <canvas id="lagrangeChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- 4. Sección de Raíces (Comparativa y Procedimientos de los 5 Métodos) -->
+        <!-- 4. Sección de Raíces con los 5 Métodos Iterativos -->
         <div class="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow border border-slate-200 space-y-4">
-            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">2. Búsqueda de Raíces (5 Métodos Iterativos)</h2>
+            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">4. Búsqueda de Raíces (5 Métodos Iterativos)</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="space-y-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700">Ecuación $f(x) = 0$</label>
+                        <label class="block text-xs font-bold text-slate-700">Ecuación f(x) = 0</label>
                         <input type="text" id="rootFunc" value="x^3 - 4*x - 9" class="w-full p-2 border rounded-lg text-xs font-mono bg-slate-50">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
@@ -176,9 +166,9 @@
                 </div>
             </div>
 
-            <!-- Procedimientos Matemáticos Detallados de los 5 Métodos -->
-            <div class="space-y-4 pt-4 border-t">
-                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Desarrollo y Ecuaciones Recurrentes de los 5 Métodos</h3>
+            <!-- Procedimiento de los 5 Métodos en Texto Estructurado -->
+            <div class="space-y-3 pt-4 border-t">
+                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Procedimiento y Desarrollo de los 5 Métodos</h3>
                 <div id="methodProceduresContainer" class="grid grid-cols-1 gap-3"></div>
             </div>
         </div>
@@ -192,7 +182,7 @@
 
     </div>
 
-    <!-- JavaScript para Lógica de Métodos Numéricos -->
+    <!-- Script de Métodos Numéricos -->
     <script>
         let rawDataset = [];
         let lagrangeChartInstance = null;
@@ -260,7 +250,7 @@
                         <td class="p-2 font-mono">${idx + 1}</td>
                         <td class="p-2 font-mono">${row[xKey]}</td>
                         <td class="p-2 font-mono">${row[yKey]}</td>
-                        <td class="p-2"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-semibold">Correcto</span></td>
+                        <td class="p-2"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-semibold">Válido</span></td>
                     </tr>
                 `;
             });
@@ -298,8 +288,8 @@
                 for (let j = 0; j < n; j++) {
                     if (j !== i) {
                         let xj = points[j].x;
-                        numStr.push(`${evalX} - ${xj}`);
-                        denStr.push(`${xi} - ${xj}`);
+                        numStr.push(`(${evalX} - ${xj})`);
+                        denStr.push(`(${xi} - ${xj})`);
                         Li *= (evalX - xj) / (xi - xj);
                     }
                 }
@@ -309,9 +299,9 @@
 
                 baseContainer.innerHTML += `
                     <div class="border-l-2 border-blue-500 pl-3 py-1 bg-white rounded shadow-sm">
-                        <p class="font-bold text-slate-700">Base ${i+1}:</p>
-                        <p>$$L_{${i}}(${evalX}) = \\frac{${numStr.join(' \\cdot ')}}{${denStr.join(' \\cdot ')}} = ${Li.toFixed(7)}$$</p>
-                        <p class="text-blue-700">$$y_{${i}} L_{${i}}(${evalX}) = ${yi} \\cdot ${Li.toFixed(7)} = ${termVal.toFixed(7)}$$</p>
+                        <p class="font-bold text-slate-700">Base L_${i}(${evalX}):</p>
+                        <p class="text-slate-600">Fórmula: [ ${numStr.join(' * ')} ] / [ ${denStr.join(' * ')} ] = <span class="font-bold text-blue-700">${Li.toFixed(7)}</span></p>
+                        <p class="text-blue-800">Término y_${i} * L_${i}(${evalX}) = ${yi} * ${Li.toFixed(7)} = <strong>${termVal.toFixed(7)}</strong></p>
                     </div>
                 `;
 
@@ -319,13 +309,11 @@
             }
 
             document.getElementById('termsSum').innerHTML = `
-                $$P(${evalX}) = ${sumTermsHTML.join(' + ')} = ${totalPx.toFixed(6)}$$
+                <p class="font-bold text-slate-800">P(${evalX}) = ${sumTermsHTML.join(' + ')} = <span class="text-emerald-700 font-extrabold">${totalPx.toFixed(6)}</span></p>
             `;
 
-            document.getElementById('resSummary').innerText = `Método: Lagrange | Puntos utilizados: ${n}`;
+            document.getElementById('resSummary').innerText = `Método: Lagrange | Puntos procesados: ${n}`;
             document.getElementById('resVal').innerText = `P(${evalX}) = ${totalPx.toFixed(6)}`;
-
-            if (window.MathJax) MathJax.typesetPromise();
 
             renderChart(points, evalX, totalPx);
         }
@@ -389,7 +377,7 @@
             });
         }
 
-        /* ----- LÓGICA Y PROCEDIMIENTO DE LOS 5 MÉTODOS DE RAÍCES ----- */
+        /* ----- MÉTODOS ITERATIVOS PARA BÚSQUEDA DE RAÍCES ----- */
         function evalMath(funcStr, xVal) {
             try {
                 let formatted = funcStr.replace(/x/g, `(${xVal})`).replace(/\^/g, '**');
@@ -412,11 +400,11 @@
             const resSecant = secant(f, a, b);
 
             const items = [
-                { name: "Bisección", r: resBisection, formula: "c_k = \\frac{a_k + b_k}{2}" },
-                { name: "Regula Falsi", r: resRegula, formula: "c_k = b_k - \\frac{f(b_k)(b_k - a_k)}{f(b_k) - f(a_k)}" },
-                { name: "Punto Fijo", r: resFixed, formula: "x_{k+1} = g(x_k) \\quad \\text{donde} \\quad g(x) = \\sqrt[3]{4x + 9}" },
-                { name: "Newton-Raphson", r: resNewton, formula: "x_{k+1} = x_k - \\frac{f(x_k)}{f'(x_k)}" },
-                { name: "Secante", r: resSecant, formula: "x_{k+1} = x_k - \\frac{f(x_k)(x_k - x_{k-1})}{f(x_k) - f(x_{k-1})}" }
+                { name: "Bisección", r: resBisection, formula: "c_k = (a_k + b_k) / 2" },
+                { name: "Regula Falsi", r: resRegula, formula: "c_k = b_k - [ f(b_k) * (b_k - a_k) ] / [ f(b_k) - f(a_k) ]" },
+                { name: "Punto Fijo", r: resFixed, formula: "x_{k+1} = g(x_k)  -->  g(x) = (4x + 9)^(1/3)" },
+                { name: "Newton-Raphson", r: resNewton, formula: "x_{k+1} = x_k - [ f(x_k) / f'(x_k) ]" },
+                { name: "Secante", r: resSecant, formula: "x_{k+1} = x_k - [ f(x_k) * (x_k - x_{k-1}) ] / [ f(x_k) - f(x_{k-1}) ]" }
             ];
 
             const procContainer = document.getElementById('methodProceduresContainer');
@@ -435,14 +423,12 @@
                 procContainer.innerHTML += `
                     <div class="bg-slate-50 p-4 rounded-lg border space-y-1 text-xs">
                         <p class="font-bold text-blue-900 border-b pb-1 text-sm">${item.name}</p>
-                        <p class="text-slate-700"><strong>Fórmula de iteración:</strong> $$${item.formula}$$</p>
-                        <p class="text-slate-600"><strong>Raíz obtenida:</strong> <span class="font-mono text-blue-700">${isNaN(item.r.root) ? 'No converge' : item.r.root.toFixed(6)}</span> en <strong>${item.r.iter}</strong> iteraciones.</p>
-                        <p class="text-slate-600"><strong>Error absoluto estimado:</strong> <span class="font-mono text-emerald-700">${isNaN(item.r.error) ? '-' : item.r.error.toExponential(4)}</span></p>
+                        <p class="text-slate-700"><strong>Ecuación de recurrencia:</strong> <span class="font-mono bg-white px-2 py-0.5 rounded border">${item.formula}</span></p>
+                        <p class="text-slate-600"><strong>Raíz aproximada:</strong> <span class="font-mono text-blue-700 font-bold">${isNaN(item.r.root) ? 'No converge' : item.r.root.toFixed(6)}</span> en <strong>${item.r.iter}</strong> iteraciones.</p>
+                        <p class="text-slate-600"><strong>Error residual:</strong> <span class="font-mono text-emerald-700 font-bold">${isNaN(item.r.error) ? '-' : item.r.error.toExponential(4)}</span></p>
                     </div>
                 `;
             });
-
-            if (window.MathJax) MathJax.typesetPromise();
         }
 
         function bisection(f, a, b, tol=1e-5, max=50) {
