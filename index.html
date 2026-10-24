@@ -90,17 +90,17 @@
             <div class="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 rounded-lg border">
                 <div class="w-full sm:w-auto">
                     <label class="block text-xs font-bold text-slate-700 mb-1">Valor de X a evaluar:</label>
-                    <input type="number" id="evalX" value="7.5" step="any" class="p-2 text-xs border rounded-lg w-full sm:w-32 font-mono">
+                    <input type="number" id="evalX" value="8" step="any" class="p-2 text-xs border rounded-lg w-full sm:w-32 font-mono">
                 </div>
                 <button onclick="calculateLagrange()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 px-5 rounded-lg transition shadow mt-auto">Calcular Interpolación</button>
             </div>
 
             <div id="resultBox" class="bg-amber-50 border border-amber-200 p-4 rounded-lg space-y-1">
                 <p class="text-xs text-amber-800 font-semibold" id="resSummary">Método: Lagrange</p>
-                <h3 class="text-xl font-extrabold text-amber-900 font-mono" id="resVal">P(7.5) = --</h3>
+                <h3 class="text-xl font-extrabold text-amber-900 font-mono" id="resVal">P(8) = --</h3>
             </div>
 
-            <!-- Procedimiento de Interpolación en Formato Texto Claro -->
+            <!-- Procedimiento de Interpolación -->
             <div class="space-y-3 pt-2">
                 <h3 class="text-sm font-bold text-slate-700 border-b pb-1">Procedimiento paso a paso</h3>
 
@@ -122,7 +122,7 @@
 
             <div class="space-y-2 pt-4">
                 <h3 class="text-sm font-bold text-slate-700">Gráfica del Polinomio de Interpolación</h3>
-                <div class="h-72 border rounded-lg p-2 bg-white">
+                <div class="h-80 border rounded-lg p-2 bg-white">
                     <canvas id="lagrangeChart"></canvas>
                 </div>
             </div>
@@ -136,12 +136,12 @@
                 <div class="space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700">Ecuación f(x) = 0</label>
-                        <input type="text" id="rootFunc" value="x^3 - 4*x - 9" class="w-full p-2 border rounded-lg text-xs font-mono bg-slate-50">
+                        <input type="text" id="rootFunc" value="x^2 - 4" class="w-full p-2 border rounded-lg text-xs font-mono bg-slate-50" placeholder="Ej: x^2 - 4 o x^3 - 4*x - 9">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs font-bold text-slate-700">Punto a / x0</label>
-                            <input type="number" id="rootA" value="2" step="any" class="w-full p-2 border rounded-lg text-xs bg-slate-50">
+                            <input type="number" id="rootA" value="0" step="any" class="w-full p-2 border rounded-lg text-xs bg-slate-50">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700">Punto b / x1</label>
@@ -166,7 +166,7 @@
                 </div>
             </div>
 
-            <!-- Procedimiento de los 5 Métodos en Texto Estructurado -->
+            <!-- Procedimiento de los 5 Métodos -->
             <div class="space-y-3 pt-4 border-t">
                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Procedimiento y Desarrollo de los 5 Métodos</h3>
                 <div id="methodProceduresContainer" class="grid grid-cols-1 gap-3"></div>
@@ -308,35 +308,47 @@
                 sumTermsHTML.push(termVal.toFixed(6));
             }
 
+            // Formato limpio para la interpolación
+            let formattedTotal = Math.abs(totalPx - Math.round(totalPx)) < 1e-5 ? Math.round(totalPx) : totalPx.toFixed(6);
+
             document.getElementById('termsSum').innerHTML = `
-                <p class="font-bold text-slate-800">P(${evalX}) = ${sumTermsHTML.join(' + ')} = <span class="text-emerald-700 font-extrabold">${totalPx.toFixed(6)}</span></p>
+                <p class="font-bold text-slate-800">P(${evalX}) = ${sumTermsHTML.join(' + ')} = <span class="text-emerald-700 font-extrabold">${formattedTotal}</span></p>
             `;
 
             document.getElementById('resSummary').innerText = `Método: Lagrange | Puntos procesados: ${n}`;
-            document.getElementById('resVal').innerText = `P(${evalX}) = ${totalPx.toFixed(6)}`;
+            document.getElementById('resVal').innerText = `P(${evalX}) = ${formattedTotal}`;
 
             renderChart(points, evalX, totalPx);
         }
 
+        /* DIBUJO CORREGIDO Y CONTINUO DE LA LÍNEA AZUL */
         function renderChart(points, evalX, evalY) {
             const ctx = document.getElementById('lagrangeChart').getContext('2d');
             if (lagrangeChartInstance) lagrangeChartInstance.destroy();
 
             const minX = points[0].x;
             const maxX = points[points.length - 1].x;
-            const step = (maxX - minX) / 40;
+            const margin = (maxX - minX) * 0.1 || 1;
 
-            const curve = [];
-            for (let x = minX; x <= maxX; x += step) {
+            const curvePoints = [];
+            const steps = 100;
+            const startX = minX - margin;
+            const endX = maxX + margin;
+            const stepSize = (endX - startX) / steps;
+
+            for (let i = 0; i <= steps; i++) {
+                let x = startX + i * stepSize;
                 let y = 0;
-                for (let i = 0; i < points.length; i++) {
-                    let term = points[i].y;
-                    for (let j = 0; j < points.length; j++) {
-                        if (i !== j) term *= (x - points[j].x) / (points[i].x - points[j].x);
+                for (let j = 0; j < points.length; j++) {
+                    let term = points[j].y;
+                    for (let k = 0; k < points.length; k++) {
+                        if (j !== k) {
+                            term *= (x - points[k].x) / (points[j].x - points[k].x);
+                        }
                     }
                     y += term;
                 }
-                curve.push({x: x, y: y});
+                curvePoints.push({ x: x, y: y });
             }
 
             lagrangeChartInstance = new Chart(ctx, {
@@ -344,45 +356,77 @@
                 data: {
                     datasets: [
                         {
+                            type: 'line',
                             label: 'Polinomio de Lagrange',
-                            data: curve,
-                            showLine: true,
+                            data: curvePoints,
                             borderColor: '#2563eb',
-                            borderWidth: 2,
+                            borderWidth: 2.5,
                             pointRadius: 0,
-                            fill: false
+                            fill: false,
+                            tension: 0.4,
+                            order: 2
                         },
                         {
                             label: 'Puntos Experimentales',
                             data: points,
-                            backgroundColor: '#475569',
-                            pointRadius: 5
+                            backgroundColor: '#334155',
+                            borderColor: '#1e293b',
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            order: 1
                         },
                         {
                             label: 'Valor Evaluado',
-                            data: [{x: evalX, y: evalY}],
+                            data: [{ x: evalX, y: evalY }],
                             backgroundColor: '#f59e0b',
-                            pointRadius: 8
+                            borderColor: '#d97706',
+                            borderWidth: 2,
+                            pointRadius: 8,
+                            pointHoverRadius: 10,
+                            order: 0
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top' }
+                    },
                     scales: {
-                        x: { title: { display: true, text: 'Variable X' } },
-                        y: { title: { display: true, text: 'Variable Y' } }
+                        x: {
+                            type: 'linear',
+                            title: { display: true, text: 'Variable X', font: { weight: 'bold' } },
+                            grid: { color: '#e2e8f0' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Variable Y', font: { weight: 'bold' } },
+                            grid: { color: '#e2e8f0' }
+                        }
                     }
                 }
             });
         }
 
-        /* ----- MÉTODOS ITERATIVOS PARA BÚSQUEDA DE RAÍCES ----- */
+        /* ----- EVALUADOR Y ALGORITMOS DE RAÍCES SIN INFINITY ----- */
         function evalMath(funcStr, xVal) {
             try {
-                let formatted = funcStr.replace(/x/g, `(${xVal})`).replace(/\^/g, '**');
-                return eval(formatted);
-            } catch (e) { return NaN; }
+                let str = String(funcStr).toLowerCase();
+                str = str.replace(/\^/g, '**');
+                str = str.replace(/\bx\b/g, `(${xVal})`);
+                
+                let fn = new Function('x', 'Math', `with(Math){ return ${str}; }`);
+                let val = fn(xVal, Math);
+                return (typeof val === 'number' && isFinite(val)) ? val : NaN;
+            } catch (e) {
+                return NaN;
+            }
+        }
+
+        function formatRootVal(r) {
+            if (isNaN(r) || !isFinite(r)) return "No converge";
+            if (Math.abs(r - Math.round(r)) < 1e-5) return Math.round(r).toString();
+            return r.toFixed(5);
         }
 
         function calculateRoots() {
@@ -402,7 +446,7 @@
             const items = [
                 { name: "Bisección", r: resBisection, formula: "c_k = (a_k + b_k) / 2" },
                 { name: "Regula Falsi", r: resRegula, formula: "c_k = b_k - [ f(b_k) * (b_k - a_k) ] / [ f(b_k) - f(a_k) ]" },
-                { name: "Punto Fijo", r: resFixed, formula: "x_{k+1} = g(x_k)  -->  g(x) = (4x + 9)^(1/3)" },
+                { name: "Punto Fijo", r: resFixed, formula: "x_{k+1} = x_k - f(x_k) / f'(x_0)" },
                 { name: "Newton-Raphson", r: resNewton, formula: "x_{k+1} = x_k - [ f(x_k) / f'(x_k) ]" },
                 { name: "Secante", r: resSecant, formula: "x_{k+1} = x_k - [ f(x_k) * (x_k - x_{k-1}) ] / [ f(x_k) - f(x_{k-1}) ]" }
             ];
@@ -411,10 +455,12 @@
             procContainer.innerHTML = '';
 
             items.forEach(item => {
+                let formattedRoot = formatRootVal(item.r.root);
+                
                 tbody.innerHTML += `
                     <tr class="border-b hover:bg-slate-50">
                         <td class="p-2 font-semibold text-slate-800">${item.name}</td>
-                        <td class="p-2 font-mono text-blue-700">${isNaN(item.r.root) ? 'No converge' : item.r.root.toFixed(5)}</td>
+                        <td class="p-2 font-mono text-blue-700 font-bold">${formattedRoot}</td>
                         <td class="p-2 text-slate-600">${item.r.iter}</td>
                         <td class="p-2 font-mono text-emerald-600">${isNaN(item.r.error) ? '-' : item.r.error.toExponential(3)}</td>
                     </tr>
@@ -424,66 +470,88 @@
                     <div class="bg-slate-50 p-4 rounded-lg border space-y-1 text-xs">
                         <p class="font-bold text-blue-900 border-b pb-1 text-sm">${item.name}</p>
                         <p class="text-slate-700"><strong>Ecuación de recurrencia:</strong> <span class="font-mono bg-white px-2 py-0.5 rounded border">${item.formula}</span></p>
-                        <p class="text-slate-600"><strong>Raíz aproximada:</strong> <span class="font-mono text-blue-700 font-bold">${isNaN(item.r.root) ? 'No converge' : item.r.root.toFixed(6)}</span> en <strong>${item.r.iter}</strong> iteraciones.</p>
+                        <p class="text-slate-600"><strong>Raíz aproximada:</strong> <span class="font-mono text-blue-700 font-bold">${formattedRoot}</span> en <strong>${item.r.iter}</strong> iteraciones.</p>
                         <p class="text-slate-600"><strong>Error residual:</strong> <span class="font-mono text-emerald-700 font-bold">${isNaN(item.r.error) ? '-' : item.r.error.toExponential(4)}</span></p>
                     </div>
                 `;
             });
         }
 
+        // 1. BISECCIÓN
         function bisection(f, a, b, tol=1e-5, max=50) {
             let fa=evalMath(f,a), fb=evalMath(f,b);
-            if(fa*fb>0) return {root:NaN, iter:0, error:NaN};
+            if(isNaN(fa) || isNaN(fb) || fa*fb>0) return {root:NaN, iter:0, error:NaN};
             let c=a, err=1, iter=0;
             while(err>tol && iter<max) {
                 let cOld=c; c=(a+b)/2; let fc=evalMath(f,c);
-                if(fc===0) break;
+                if(fc===0) { err=0; break; }
                 if(fa*fc<0){ b=c; fb=fc; } else { a=c; fa=fc; }
                 err=Math.abs(c-cOld); iter++;
             }
             return {root:c, iter, error:err};
         }
 
+        // 2. REGULA FALSI
         function regulaFalsi(f, a, b, tol=1e-5, max=50) {
             let fa=evalMath(f,a), fb=evalMath(f,b);
-            if(fa*fb>0) return {root:NaN, iter:0, error:NaN};
+            if(isNaN(fa) || isNaN(fb) || fa*fb>0) return {root:NaN, iter:0, error:NaN};
             let c=a, err=1, iter=0;
             while(err>tol && iter<max) {
-                let cOld=c; c=b-(fb*(b-a))/(fb-fa); let fc=evalMath(f,c);
-                if(fc===0) break;
+                let cOld=c;
+                let denom = fb - fa;
+                if(Math.abs(denom) < 1e-12) break;
+                c = b - (fb * (b - a)) / denom;
+                let fc = evalMath(f,c);
+                if(fc===0) { err=0; break; }
                 if(fa*fc<0){ b=c; fb=fc; } else { a=c; fa=fc; }
                 err=Math.abs(c-cOld); iter++;
             }
             return {root:c, iter, error:err};
         }
 
+        // 3. PUNTO FIJO DINÁMICO (Sin fórmulas fijas)
         function fixedPoint(f, x0, tol=1e-5, max=50) {
-            let x=x0, iter=0, err=1;
-            while(err>tol && iter<max) {
-                let gx = Math.cbrt(4*x + 9);
-                if(isNaN(gx)) break;
-                err=Math.abs(gx-x); x=gx; iter++;
+            let h = 1e-5;
+            let dfx0 = (evalMath(f, x0 + h) - evalMath(f, x0 - h)) / (2 * h);
+            if (Math.abs(dfx0) < 1e-5 || isNaN(dfx0)) dfx0 = 1.0;
+
+            let x = x0, iter = 0, err = 1;
+            while (err > tol && iter < max) {
+                let fx = evalMath(f, x);
+                if (isNaN(fx) || !isFinite(fx)) break;
+                let gx = x - fx / dfx0;
+                if (isNaN(gx) || !isFinite(gx)) break;
+                err = Math.abs(gx - x);
+                x = gx;
+                iter++;
             }
-            return {root:x, iter, error:err};
+            return { root: x, iter, error: err };
         }
 
+        // 4. NEWTON-RAPHSON
         function newtonRaphson(f, x0, tol=1e-5, max=50) {
             let x=x0, iter=0, err=1, h=1e-5;
             while(err>tol && iter<max) {
                 let fx=evalMath(f,x);
                 let dfx=(evalMath(f,x+h)-evalMath(f,x-h))/(2*h);
-                if(Math.abs(dfx)<1e-12) break;
-                let xNext=x-(fx/dfx); err=Math.abs(xNext-x); x=xNext; iter++;
+                if(Math.abs(dfx)<1e-12 || isNaN(dfx)) break;
+                let xNext=x-(fx/dfx);
+                if(!isFinite(xNext)) break;
+                err=Math.abs(xNext-x); x=xNext; iter++;
             }
             return {root:x, iter, error:err};
         }
 
+        // 5. SECANTE
         function secant(f, x0, x1, tol=1e-5, max=50) {
             let iter=0, err=1;
             while(err>tol && iter<max) {
                 let f0=evalMath(f,x0), f1=evalMath(f,x1);
-                if(Math.abs(f1-f0)<1e-12) break;
-                let xNext=x1-f1*(x1-x0)/(f1-f0); err=Math.abs(xNext-x1); x0=x1; x1=xNext; iter++;
+                let denom = f1 - f0;
+                if(Math.abs(denom)<1e-12 || isNaN(denom)) break;
+                let xNext = x1 - f1 * (x1 - x0) / denom;
+                if(!isFinite(xNext)) break;
+                err=Math.abs(xNext-x1); x0=x1; x1=xNext; iter++;
             }
             return {root:x1, iter, error:err};
         }
