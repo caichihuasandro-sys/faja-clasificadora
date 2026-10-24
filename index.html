@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis Numérico - Faja Clasificadora por Color</title>
+    <title>Métodos Numéricos FIEE - UNMSM</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- MathJax para fórmulas matemáticas -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        /* Fondo con la Facultad (FIEE/UNMSM) + Capa oscura para legibilidad */
         body {
-            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), 
+            background: linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.82)), 
                         url('https://fiee.unmsm.edu.pe/images/home/Neutral%20Din%C3%A1mico%20Mis%20Momentos%20Favoritos%20Post%20para%20Instagram%20(45)%20(2).jpg');
             background-size: cover;
             background-position: center;
@@ -20,216 +21,360 @@
     </style>
 </head>
 <body class="text-slate-800 font-sans p-4 md:p-6 min-h-screen">
-    <div class="max-w-6xl mx-auto space-y-6">
+    <div class="max-w-5xl mx-auto space-y-6">
 
-        <!-- Encabezado Institucional (UNMSM - FIEE) -->
-        <header class="bg-blue-900/90 backdrop-blur-md text-white p-6 rounded-xl shadow-xl border border-blue-700/50">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                
-                <!-- Logo UNMSM -->
-                <div class="flex items-center space-x-3">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFyPZljotNXDMHO7xBgxYp-TnKxkjimpkBp8Q5Z3sj-75ZwszbJleMBcbS&s=10" 
-                         alt="Logo UNMSM" 
-                         class="h-16 w-auto bg-white/10 p-1 rounded-lg shadow">
-                    <div>
-                        <p class="text-xs font-semibold text-blue-200 tracking-wider">UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS</p>
-                        <p class="text-xs text-blue-300">Universidad del Perú, Decana de América</p>
-                    </div>
+        <!-- Encabezado Institucional FIEE -->
+        <header class="bg-white/95 backdrop-blur-md p-6 rounded-xl shadow-xl border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFyPZljotNXDMHO7xBgxYp-TnKxkjimpkBp8Q5Z3sj-75ZwszbJleMBcbS&s=10" alt="UNMSM" class="h-14 w-auto">
+                <div>
+                    <h1 class="text-xl font-extrabold text-slate-800 uppercase tracking-tight">Métodos Numéricos FIEE</h1>
+                    <p class="text-xs text-slate-500 font-semibold">Facultad de Ingeniería Electrónica y Eléctrica - UNMSM</p>
                 </div>
-
-                <!-- Título Central del Proyecto -->
-                <div class="text-center md:text-left flex-1 md:mx-6 border-t md:border-t-0 md:border-l border-blue-700/60 pt-3 md:pt-0 md:pl-6">
-                    <h1 class="text-xl md:text-2xl font-bold text-white">Sistema de Clasificación por Color en Faja Transportadora</h1>
-                    <p class="text-blue-200 text-xs mt-1">Plataforma de Métodos Numéricos: Interpolación y 5 Métodos Iterativos de Raíces</p>
-                </div>
-
-                <!-- Logo FIEE -->
-                <div class="flex items-center space-x-3 bg-white/10 p-2 rounded-lg border border-white/20 shadow">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVkcjwlfETdGvS4icRF_k_z-1HpteapauoYadfqlQEr50V2zTyilL0aesn&s=10" 
-                         alt="Logo FIEE" 
-                         class="h-12 w-auto object-contain rounded">
-                    <div class="text-right">
-                        <span class="block text-sm font-extrabold text-amber-400">FIEE</span>
-                        <span class="block text-[10px] text-slate-200 leading-tight">Facultad de Ingeniería<br>Electrónica y Eléctrica</span>
-                    </div>
-                </div>
-
+            </div>
+            <div class="flex items-center space-x-3">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVkcjwlfETdGvS4icRF_k_z-1HpteapauoYadfqlQEr50V2zTyilL0aesn&s=10" alt="FIEE" class="h-12 w-auto object-contain">
             </div>
         </header>
 
-        <!-- Panel de Control / Sensores -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200 space-y-4">
-                <h2 class="text-lg font-bold text-slate-700 border-b pb-2">1. Entrada de Datos (Sensor TCS3200)</h2>
+        <!-- Presentación -->
+        <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow border border-slate-200">
+            <h2 class="text-lg font-bold text-slate-800">MÉTODOS NUMÉRICOS</h2>
+            <p class="text-xs text-slate-600 mt-1">Herramienta académica para importar datos experimentales, aplicar métodos numéricos y desplegar procedimientos detallados paso a paso.</p>
+        </div>
+
+        <!-- 1. Importación de Datos -->
+        <div class="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow border border-slate-200 space-y-4">
+            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">Importación de datos</h2>
+            <p class="text-xs text-slate-500">Selecciona un archivo CSV o TXT que contenga las mediciones del sensor.</p>
+            
+            <div class="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 rounded-lg border border-dashed border-slate-300">
+                <input type="file" id="fileInput" accept=".csv, .txt" class="hidden" onchange="handleFileSelect(event)">
+                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2 px-4 rounded-lg transition shadow">Seleccionar archivo</button>
+                <span id="fileNameDisplay" class="text-xs font-mono text-slate-600">No se ha seleccionado archivo</span>
+                <button onclick="loadDefaultData()" class="ml-auto text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-lg font-semibold transition">Cargar Muestra por Defecto</button>
+            </div>
+        </div>
+
+        <!-- 2. Área de Trabajo -->
+        <div id="workspaceSection" class="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow border border-slate-200 space-y-4">
+            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">Área de Trabajo</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 uppercase">Seleccionar Objeto Detectado</label>
-                    <select id="sampleSelect" class="mt-1 w-full p-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 text-sm" onchange="loadSampleData()">
-                        <option value="red">Objeto Rojo (Muestra A)</option>
-                        <option value="green">Objeto Verde (Muestra B)</option>
-                        <option value="blue">Objeto Azul (Muestra C)</option>
-                        <option value="custom">Entrada Personalizada</option>
-                    </select>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Variable independiente ($x$)</label>
+                    <select id="selectX" class="w-full p-2 text-xs border rounded-lg bg-slate-50 font-mono" onchange="updateTableAndCalculate()"></select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Puntos de Calibración Frecuencia (kHz) vs Frecuencia de Salida</label>
-                    <textarea id="pointsInput" class="w-full h-24 p-2 border rounded-lg text-xs font-mono bg-slate-50" placeholder="x,y (un punto por línea)">0, 10&#10;20, 35&#10;50, 80&#10;100, 150</textarea>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Variable dependiente ($y$)</label>
+                    <select id="selectY" class="w-full p-2 text-xs border rounded-lg bg-slate-50 font-mono" onchange="updateTableAndCalculate()"></select>
                 </div>
-                <button onclick="processInterpolation()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold text-sm transition shadow-md">Calcular Interpolación</button>
             </div>
 
-            <!-- Gráfico de Interpolación -->
-            <div class="md:col-span-2 bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">2. Curva de Calibración por Interpolación</h2>
-                <div class="h-64">
-                    <canvas id="interpolationChart"></canvas>
+            <!-- Tabla de Datos Importados -->
+            <div class="overflow-x-auto border rounded-lg max-h-56">
+                <table class="w-full text-xs text-left text-slate-600">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0">
+                        <tr>
+                            <th class="p-2 border-b">Fila</th>
+                            <th class="p-2 border-b" id="thX">x</th>
+                            <th class="p-2 border-b" id="thY">y</th>
+                            <th class="p-2 border-b">Validación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. Métodos de Interpolación (Con Procedimiento Completo) -->
+        <div class="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow border border-slate-200 space-y-4">
+            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">1. Interpolación por Polinomio de Lagrange</h2>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 rounded-lg border">
+                <div class="w-full sm:w-auto">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Valor de $x$ a evaluar:</label>
+                    <input type="number" id="evalX" value="7.5" step="any" class="p-2 text-xs border rounded-lg w-full sm:w-32 font-mono">
+                </div>
+                <button onclick="calculateLagrange()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 px-5 rounded-lg transition shadow mt-auto">Calcular Interpolación</button>
+            </div>
+
+            <div id="resultBox" class="bg-amber-50 border border-amber-200 p-4 rounded-lg space-y-1">
+                <p class="text-xs text-amber-800 font-semibold" id="resSummary">Método: Lagrange</p>
+                <h3 class="text-xl font-extrabold text-amber-900 font-mono" id="resVal">P(7.5) = --</h3>
+            </div>
+
+            <!-- Procedimiento Lagrange Paso a Paso -->
+            <div class="space-y-3 pt-2">
+                <h3 class="text-sm font-bold text-slate-700 border-b pb-1">Procedimiento de Interpolación paso a paso</h3>
+
+                <div class="bg-slate-50 p-3 rounded-lg text-xs space-y-2 border">
+                    <p class="font-bold text-slate-700">1. Fórmula general de Lagrange</p>
+                    <div class="text-center py-1">
+                        $$P(x) = \sum_{i=0}^{n} y_i L_i(x) \quad \text{donde} \quad L_i(x) = \prod_{j=0, j \neq i}^{n} \frac{x - x_j}{x_i - x_j}$$
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-lg text-xs space-y-1 border">
+                    <p class="font-bold text-slate-700 mb-1">2. Puntos utilizados</p>
+                    <div id="usedPoints" class="flex flex-wrap gap-2 font-mono text-[11px]"></div>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-lg text-xs space-y-2 border">
+                    <p class="font-bold text-slate-700">3. Evaluación de cada base $L_i(x)$ y sustitución</p>
+                    <div id="baseEvaluations" class="space-y-3 font-mono text-[11px]"></div>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-lg text-xs space-y-1 border">
+                    <p class="font-bold text-slate-700">4. Suma de los términos calculados</p>
+                    <div id="termsSum" class="font-mono text-[11px] overflow-x-auto py-1"></div>
+                </div>
+            </div>
+
+            <div class="space-y-2 pt-4">
+                <h3 class="text-sm font-bold text-slate-700">Gráfica de Interpolación</h3>
+                <div class="h-72 border rounded-lg p-2 bg-white">
+                    <canvas id="lagrangeChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Resultados de Interpolación -->
-        <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200">
-            <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-3">Resultados del Polinomio de Interpolación</h2>
-            <div id="interpolationOutput" class="text-xs font-mono bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto shadow-inner">
-                Seleccione datos y presione "Calcular Interpolación".
-            </div>
-        </div>
-
-        <!-- Sección de Raíces con los 5 Métodos -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200 space-y-4">
-                <h2 class="text-lg font-bold text-slate-700 border-b pb-2">3. Búsqueda de Raíces / Umbral</h2>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-500 uppercase">Ecuación Objetivo f(x) = 0</label>
-                    <input type="text" id="rootFunction" value="x^3 - 4*x - 9" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50 font-mono" placeholder="Ej: x^3 - 4*x - 9">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
+        <!-- 4. Sección de Raíces (Comparativa y Procedimientos de los 5 Métodos) -->
+        <div class="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow border border-slate-200 space-y-4">
+            <h2 class="text-md font-bold text-slate-800 uppercase tracking-wide">2. Búsqueda de Raíces (5 Métodos Iterativos)</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase">Intervalo a / x0</label>
-                        <input type="number" id="paramA" value="2" step="any" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
+                        <label class="block text-xs font-bold text-slate-700">Ecuación $f(x) = 0$</label>
+                        <input type="text" id="rootFunc" value="x^3 - 4*x - 9" class="w-full p-2 border rounded-lg text-xs font-mono bg-slate-50">
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase">Intervalo b / x1</label>
-                        <input type="number" id="paramB" value="3" step="any" class="mt-1 w-full p-2 border rounded-lg text-sm bg-slate-50">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700">Punto a / x0</label>
+                            <input type="number" id="rootA" value="2" step="any" class="w-full p-2 border rounded-lg text-xs bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700">Punto b / x1</label>
+                            <input type="number" id="rootB" value="3" step="any" class="w-full p-2 border rounded-lg text-xs bg-slate-50">
+                        </div>
                     </div>
+                    <button onclick="calculateRoots()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2.5 rounded-lg transition shadow">Calcular 5 Métodos</button>
                 </div>
-                <button onclick="processRoots()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-semibold text-sm transition shadow-md">Calcular Raíces (5 Métodos)</button>
-            </div>
 
-            <!-- Tabla Comparativa para los 5 Métodos -->
-            <div class="md:col-span-2 bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-3">Comparativa de Métodos Iterativos (5 Algoritmos)</h2>
-                <div class="overflow-x-auto">
+                <div class="md:col-span-2 overflow-x-auto border rounded-lg">
                     <table class="w-full text-xs text-left text-slate-600">
                         <thead class="text-xs text-slate-700 uppercase bg-slate-100">
                             <tr>
-                                <th class="p-2">Método</th>
-                                <th class="p-2">Raíz Calculada</th>
-                                <th class="p-2">Iteraciones</th>
-                                <th class="p-2">Error Est.</th>
+                                <th class="p-2 border-b">Método</th>
+                                <th class="p-2 border-b">Raíz Calculada</th>
+                                <th class="p-2 border-b">Iteraciones</th>
+                                <th class="p-2 border-b">Error Est.</th>
                             </tr>
                         </thead>
-                        <tbody id="rootsTableBody">
-                            <tr>
-                                <td colspan="4" class="p-3 text-center text-slate-400">Ejecute el cálculo de raíces para mostrar los 5 métodos.</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="rootsTable"></tbody>
                     </table>
                 </div>
             </div>
+
+            <!-- Procedimientos Matemáticos Detallados de los 5 Métodos -->
+            <div class="space-y-4 pt-4 border-t">
+                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Desarrollo y Ecuaciones Recurrentes de los 5 Métodos</h3>
+                <div id="methodProceduresContainer" class="grid grid-cols-1 gap-3"></div>
+            </div>
         </div>
+
+        <!-- Pie de página Institucional -->
+        <footer class="bg-blue-950 text-white p-4 rounded-xl text-center text-xs space-y-1 shadow-lg border border-blue-900">
+            <p><strong>Curso:</strong> Métodos Numéricos &nbsp;|&nbsp; <strong>Docente:</strong> Jesus Alfonso Milanes Fernandez</p>
+            <p><strong>Integrantes:</strong> Caichihua Sandro, Leonardo Gutierrez, Eder Apablaza, Felipe Insausti</p>
+            <p class="text-blue-300 text-[10px]">Universidad Nacional Mayor de San Marcos - 2026</p>
+        </footer>
 
     </div>
 
-    <!-- Script de Métodos Numéricos -->
+    <!-- JavaScript para Lógica de Métodos Numéricos -->
     <script>
-        let interpChart = null;
+        let rawDataset = [];
+        let lagrangeChartInstance = null;
 
-        function loadSampleData() {
-            const sample = document.getElementById('sampleSelect').value;
-            const textarea = document.getElementById('pointsInput');
-            if (sample === 'red') {
-                textarea.value = "0, 5\n20, 45\n50, 110\n100, 210";
-            } else if (sample === 'green') {
-                textarea.value = "0, 2\n25, 30\n60, 85\n100, 160";
-            } else if (sample === 'blue') {
-                textarea.value = "0, 8\n30, 60\n70, 140\n100, 230";
-            }
-            processInterpolation();
+        const defaultCSV = `Tiempo_s,Altura_cm,Temperatura_C\n0,0,20\n3,3,21\n5,10,22\n10,11,25\n15,11,30\n20,15,35`;
+
+        function loadDefaultData() {
+            parseCSVText(defaultCSV, "prueba.csv");
         }
 
-        function parsePoints(text) {
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            document.getElementById('fileNameDisplay').innerText = file.name;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                parseCSVText(e.target.result, file.name);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSVText(text, name) {
+            document.getElementById('fileNameDisplay').innerText = `${name} (Cargado)`;
             const lines = text.trim().split('\n');
-            const points = [];
-            for (let line of lines) {
-                const parts = line.split(',');
-                if (parts.length === 2) {
-                    const x = parseFloat(parts[0].trim());
-                    const y = parseFloat(parts[1].trim());
-                    if (!isNaN(x) && !isNaN(y)) {
-                        points.push({x, y});
-                    }
+            if (lines.length < 2) return;
+
+            const headers = lines[0].split(',').map(h => h.trim());
+            rawDataset = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => parseFloat(v.trim()));
+                if (values.length === headers.length) {
+                    let rowObj = {};
+                    headers.forEach((h, idx) => rowObj[h] = values[idx]);
+                    rawDataset.push(rowObj);
                 }
             }
-            return points;
+
+            const selX = document.getElementById('selectX');
+            const selY = document.getElementById('selectY');
+            selX.innerHTML = '';
+            selY.innerHTML = '';
+
+            headers.forEach((h, idx) => {
+                selX.innerHTML += `<option value="${h}" ${idx===0?'selected':''}>${h}</option>`;
+                selY.innerHTML += `<option value="${h}" ${idx===1?'selected':''}>${h}</option>`;
+            });
+
+            updateTableAndCalculate();
         }
 
-        function lagrangeInterpolation(points, x) {
-            let total = 0;
+        function updateTableAndCalculate() {
+            const xKey = document.getElementById('selectX').value;
+            const yKey = document.getElementById('selectY').value;
+
+            document.getElementById('thX').innerText = xKey;
+            document.getElementById('thY').innerText = yKey;
+
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+
+            rawDataset.forEach((row, idx) => {
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-2 font-mono">${idx + 1}</td>
+                        <td class="p-2 font-mono">${row[xKey]}</td>
+                        <td class="p-2 font-mono">${row[yKey]}</td>
+                        <td class="p-2"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-semibold">Correcto</span></td>
+                    </tr>
+                `;
+            });
+
+            calculateLagrange();
+        }
+
+        function calculateLagrange() {
+            const xKey = document.getElementById('selectX').value;
+            const yKey = document.getElementById('selectY').value;
+            const evalX = parseFloat(document.getElementById('evalX').value);
+
+            const points = rawDataset.map(r => ({ x: r[xKey], y: r[yKey] })).filter(p => !isNaN(p.x) && !isNaN(p.y));
+            points.sort((a, b) => a.x - b.x);
+
             const n = points.length;
+            let totalPx = 0;
+
+            const pointsContainer = document.getElementById('usedPoints');
+            pointsContainer.innerHTML = points.map(p => `<span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded">(${p.x}, ${p.y})</span>`).join(' ');
+
+            const baseContainer = document.getElementById('baseEvaluations');
+            baseContainer.innerHTML = '';
+
+            let sumTermsHTML = [];
+
             for (let i = 0; i < n; i++) {
                 let xi = points[i].x;
                 let yi = points[i].y;
-                let term = yi;
+
+                let numStr = [];
+                let denStr = [];
+                let Li = 1;
+
                 for (let j = 0; j < n; j++) {
                     if (j !== i) {
-                        term = term * (x - points[j].x) / (xi - points[j].x);
+                        let xj = points[j].x;
+                        numStr.push(`${evalX} - ${xj}`);
+                        denStr.push(`${xi} - ${xj}`);
+                        Li *= (evalX - xj) / (xi - xj);
                     }
                 }
-                total += term;
+
+                let termVal = yi * Li;
+                totalPx += termVal;
+
+                baseContainer.innerHTML += `
+                    <div class="border-l-2 border-blue-500 pl-3 py-1 bg-white rounded shadow-sm">
+                        <p class="font-bold text-slate-700">Base ${i+1}:</p>
+                        <p>$$L_{${i}}(${evalX}) = \\frac{${numStr.join(' \\cdot ')}}{${denStr.join(' \\cdot ')}} = ${Li.toFixed(7)}$$</p>
+                        <p class="text-blue-700">$$y_{${i}} L_{${i}}(${evalX}) = ${yi} \\cdot ${Li.toFixed(7)} = ${termVal.toFixed(7)}$$</p>
+                    </div>
+                `;
+
+                sumTermsHTML.push(termVal.toFixed(6));
             }
-            return total;
+
+            document.getElementById('termsSum').innerHTML = `
+                $$P(${evalX}) = ${sumTermsHTML.join(' + ')} = ${totalPx.toFixed(6)}$$
+            `;
+
+            document.getElementById('resSummary').innerText = `Método: Lagrange | Puntos utilizados: ${n}`;
+            document.getElementById('resVal').innerText = `P(${evalX}) = ${totalPx.toFixed(6)}`;
+
+            if (window.MathJax) MathJax.typesetPromise();
+
+            renderChart(points, evalX, totalPx);
         }
 
-        function processInterpolation() {
-            const text = document.getElementById('pointsInput').value;
-            const points = parsePoints(text);
-            if (points.length < 2) {
-                alert("Ingrese al menos 2 puntos válidos.");
-                return;
-            }
-
-            points.sort((a, b) => a.x - b.x);
+        function renderChart(points, evalX, evalY) {
+            const ctx = document.getElementById('lagrangeChart').getContext('2d');
+            if (lagrangeChartInstance) lagrangeChartInstance.destroy();
 
             const minX = points[0].x;
             const maxX = points[points.length - 1].x;
-            const step = (maxX - minX) / 50;
+            const step = (maxX - minX) / 40;
 
-            const curveData = [];
+            const curve = [];
             for (let x = minX; x <= maxX; x += step) {
-                curveData.push({x: x, y: lagrangeInterpolation(points, x)});
+                let y = 0;
+                for (let i = 0; i < points.length; i++) {
+                    let term = points[i].y;
+                    for (let j = 0; j < points.length; j++) {
+                        if (i !== j) term *= (x - points[j].x) / (points[i].x - points[j].x);
+                    }
+                    y += term;
+                }
+                curve.push({x: x, y: y});
             }
 
-            const ctx = document.getElementById('interpolationChart').getContext('2d');
-            if (interpChart) interpChart.destroy();
-
-            interpChart = new Chart(ctx, {
+            lagrangeChartInstance = new Chart(ctx, {
                 type: 'scatter',
                 data: {
                     datasets: [
                         {
-                            label: 'Puntos Muestreados (Sensor TCS3200)',
-                            data: points,
-                            backgroundColor: 'rgba(239, 68, 68, 1)',
-                            pointRadius: 6
+                            label: 'Polinomio de Lagrange',
+                            data: curve,
+                            showLine: true,
+                            borderColor: '#2563eb',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false
                         },
                         {
-                            label: 'Polinomio de Lagrange P(x)',
-                            data: curveData,
-                            showLine: true,
-                            borderColor: 'rgba(37, 99, 235, 1)',
-                            borderWidth: 2,
-                            fill: false,
-                            pointRadius: 0
+                            label: 'Puntos Experimentales',
+                            data: points,
+                            backgroundColor: '#475569',
+                            pointRadius: 5
+                        },
+                        {
+                            label: 'Valor Evaluado',
+                            data: [{x: evalX, y: evalY}],
+                            backgroundColor: '#f59e0b',
+                            pointRadius: 8
                         }
                     ]
                 },
@@ -237,156 +382,129 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'Frecuencia Entrada (kHz)' } },
-                        y: { title: { display: true, text: 'Respuesta Sensor' } }
+                        x: { title: { display: true, text: 'Variable X' } },
+                        y: { title: { display: true, text: 'Variable Y' } }
                     }
                 }
             });
-
-            document.getElementById('interpolationOutput').innerHTML = 
-                `Puntos leídos correctamente: ${points.length}\n` +
-                `Rango analizado: [${minX}, ${maxX}]\n` +
-                `Método Lagrange ejecutado exitosamente con evaluación suave.`;
         }
 
+        /* ----- LÓGICA Y PROCEDIMIENTO DE LOS 5 MÉTODOS DE RAÍCES ----- */
         function evalMath(funcStr, xVal) {
             try {
                 let formatted = funcStr.replace(/x/g, `(${xVal})`).replace(/\^/g, '**');
                 return eval(formatted);
-            } catch (e) {
-                return NaN;
-            }
+            } catch (e) { return NaN; }
         }
 
-        /* ----- ALGORITMOS DE LOS 5 MÉTODOS DE RAÍCES ----- */
+        function calculateRoots() {
+            const f = document.getElementById('rootFunc').value;
+            const a = parseFloat(document.getElementById('rootA').value);
+            const b = parseFloat(document.getElementById('rootB').value);
 
-        // 1. Método de Bisección
-        function bisection(funcStr, a, b, tol = 1e-5, maxIter = 50) {
-            let fa = evalMath(funcStr, a);
-            let fb = evalMath(funcStr, b);
-            if (fa * fb > 0) return { root: NaN, iter: 0, error: NaN };
+            const tbody = document.getElementById('rootsTable');
+            tbody.innerHTML = '';
 
-            let c = a, err = 1, iter = 0;
-            while (err > tol && iter < maxIter) {
-                let cOld = c;
-                c = (a + b) / 2;
-                let fc = evalMath(funcStr, c);
-                if (fc === 0) break;
+            const resBisection = bisection(f, a, b);
+            const resRegula = regulaFalsi(f, a, b);
+            const resFixed = fixedPoint(f, (a+b)/2);
+            const resNewton = newtonRaphson(f, (a+b)/2);
+            const resSecant = secant(f, a, b);
 
-                if (fa * fc < 0) { b = c; fb = fc; }
-                else { a = c; fa = fc; }
-
-                err = Math.abs(c - cOld);
-                iter++;
-            }
-            return { root: c, iter, error: err };
-        }
-
-        // 2. Método de Regula Falsi (Regla de la Falsa Posición)
-        function regulaFalsi(funcStr, a, b, tol = 1e-5, maxIter = 50) {
-            let fa = evalMath(funcStr, a);
-            let fb = evalMath(funcStr, b);
-            if (fa * fb > 0) return { root: NaN, iter: 0, error: NaN };
-
-            let c = a, err = 1, iter = 0;
-            while (err > tol && iter < maxIter) {
-                let cOld = c;
-                c = b - (fb * (b - a)) / (fb - fa);
-                let fc = evalMath(funcStr, c);
-                if (fc === 0) break;
-
-                if (fa * fc < 0) { b = c; fb = fc; }
-                else { a = c; fa = fc; }
-
-                err = Math.abs(c - cOld);
-                iter++;
-            }
-            return { root: c, iter, error: err };
-        }
-
-        // 3. Método de Punto Fijo (Despeje g(x) = (4x + 9)^(1/3))
-        function fixedPoint(funcStr, x0, tol = 1e-5, maxIter = 50) {
-            let x = x0, iter = 0, err = 1;
-            while (err > tol && iter < maxIter) {
-                let gx = Math.cbrt(4 * x + 9); // g(x) derivada implícitamente de x^3 - 4x - 9 = 0
-                if (isNaN(gx)) break;
-                err = Math.abs(gx - x);
-                x = gx;
-                iter++;
-            }
-            return { root: x, iter, error: err };
-        }
-
-        // 4. Método de Newton-Raphson
-        function newtonRaphson(funcStr, x0, tol = 1e-5, maxIter = 50) {
-            let x = x0, iter = 0, err = 1;
-            const h = 1e-5;
-            while (err > tol && iter < maxIter) {
-                let fx = evalMath(funcStr, x);
-                let dfx = (evalMath(funcStr, x + h) - evalMath(funcStr, x - h)) / (2 * h);
-                if (Math.abs(dfx) < 1e-12) break;
-
-                let xNext = x - (fx / dfx);
-                err = Math.abs(xNext - x);
-                x = xNext;
-                iter++;
-            }
-            return { root: x, iter, error: err };
-        }
-
-        // 5. Método de la Secante
-        function secant(funcStr, x0, x1, tol = 1e-5, maxIter = 50) {
-            let iter = 0, err = 1;
-            while (err > tol && iter < maxIter) {
-                let f0 = evalMath(funcStr, x0);
-                let f1 = evalMath(funcStr, x1);
-                if (Math.abs(f1 - f0) < 1e-12) break;
-
-                let xNext = x1 - f1 * (x1 - x0) / (f1 - f0);
-                err = Math.abs(xNext - x1);
-                x0 = x1;
-                x1 = xNext;
-                iter++;
-            }
-            return { root: x1, iter, error: err };
-        }
-
-        function processRoots() {
-            const funcStr = document.getElementById('rootFunction').value;
-            let a = parseFloat(document.getElementById('paramA').value);
-            let b = parseFloat(document.getElementById('paramB').value);
-
-            let tbody = document.getElementById('rootsTableBody');
-            tbody.innerHTML = "";
-
-            let bisectRes = bisection(funcStr, a, b);
-            let regulaRes = regulaFalsi(funcStr, a, b);
-            let fixedRes  = fixedPoint(funcStr, (a + b) / 2);
-            let newtonRes = newtonRaphson(funcStr, (a + b) / 2);
-            let secantRes = secant(funcStr, a, b);
-
-            const results = [
-                { name: "Bisección", res: bisectRes },
-                { name: "Regula Falsi", res: regulaRes },
-                { name: "Punto Fijo", res: fixedRes },
-                { name: "Newton-Raphson", res: newtonRes },
-                { name: "Secante", res: secantRes }
+            const items = [
+                { name: "Bisección", r: resBisection, formula: "c_k = \\frac{a_k + b_k}{2}" },
+                { name: "Regula Falsi", r: resRegula, formula: "c_k = b_k - \\frac{f(b_k)(b_k - a_k)}{f(b_k) - f(a_k)}" },
+                { name: "Punto Fijo", r: resFixed, formula: "x_{k+1} = g(x_k) \\quad \\text{donde} \\quad g(x) = \\sqrt[3]{4x + 9}" },
+                { name: "Newton-Raphson", r: resNewton, formula: "x_{k+1} = x_k - \\frac{f(x_k)}{f'(x_k)}" },
+                { name: "Secante", r: resSecant, formula: "x_{k+1} = x_k - \\frac{f(x_k)(x_k - x_{k-1})}{f(x_k) - f(x_{k-1})}" }
             ];
 
-            results.forEach(item => {
-                let row = `<tr class="border-b hover:bg-slate-50 transition">
-                    <td class="p-2 font-semibold text-slate-800">${item.name}</td>
-                    <td class="p-2 font-mono text-blue-700">${isNaN(item.res.root) ? 'No converge' : item.res.root.toFixed(5)}</td>
-                    <td class="p-2 text-slate-600">${item.res.iter}</td>
-                    <td class="p-2 font-mono text-emerald-600">${isNaN(item.res.error) ? '-' : item.res.error.toExponential(3)}</td>
-                </tr>`;
-                tbody.innerHTML += row;
+            const procContainer = document.getElementById('methodProceduresContainer');
+            procContainer.innerHTML = '';
+
+            items.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-2 font-semibold text-slate-800">${item.name}</td>
+                        <td class="p-2 font-mono text-blue-700">${isNaN(item.r.root) ? 'No converge' : item.r.root.toFixed(5)}</td>
+                        <td class="p-2 text-slate-600">${item.r.iter}</td>
+                        <td class="p-2 font-mono text-emerald-600">${isNaN(item.r.error) ? '-' : item.r.error.toExponential(3)}</td>
+                    </tr>
+                `;
+
+                procContainer.innerHTML += `
+                    <div class="bg-slate-50 p-4 rounded-lg border space-y-1 text-xs">
+                        <p class="font-bold text-blue-900 border-b pb-1 text-sm">${item.name}</p>
+                        <p class="text-slate-700"><strong>Fórmula de iteración:</strong> $$${item.formula}$$</p>
+                        <p class="text-slate-600"><strong>Raíz obtenida:</strong> <span class="font-mono text-blue-700">${isNaN(item.r.root) ? 'No converge' : item.r.root.toFixed(6)}</span> en <strong>${item.r.iter}</strong> iteraciones.</p>
+                        <p class="text-slate-600"><strong>Error absoluto estimado:</strong> <span class="font-mono text-emerald-700">${isNaN(item.r.error) ? '-' : item.r.error.toExponential(4)}</span></p>
+                    </div>
+                `;
             });
+
+            if (window.MathJax) MathJax.typesetPromise();
+        }
+
+        function bisection(f, a, b, tol=1e-5, max=50) {
+            let fa=evalMath(f,a), fb=evalMath(f,b);
+            if(fa*fb>0) return {root:NaN, iter:0, error:NaN};
+            let c=a, err=1, iter=0;
+            while(err>tol && iter<max) {
+                let cOld=c; c=(a+b)/2; let fc=evalMath(f,c);
+                if(fc===0) break;
+                if(fa*fc<0){ b=c; fb=fc; } else { a=c; fa=fc; }
+                err=Math.abs(c-cOld); iter++;
+            }
+            return {root:c, iter, error:err};
+        }
+
+        function regulaFalsi(f, a, b, tol=1e-5, max=50) {
+            let fa=evalMath(f,a), fb=evalMath(f,b);
+            if(fa*fb>0) return {root:NaN, iter:0, error:NaN};
+            let c=a, err=1, iter=0;
+            while(err>tol && iter<max) {
+                let cOld=c; c=b-(fb*(b-a))/(fb-fa); let fc=evalMath(f,c);
+                if(fc===0) break;
+                if(fa*fc<0){ b=c; fb=fc; } else { a=c; fa=fc; }
+                err=Math.abs(c-cOld); iter++;
+            }
+            return {root:c, iter, error:err};
+        }
+
+        function fixedPoint(f, x0, tol=1e-5, max=50) {
+            let x=x0, iter=0, err=1;
+            while(err>tol && iter<max) {
+                let gx = Math.cbrt(4*x + 9);
+                if(isNaN(gx)) break;
+                err=Math.abs(gx-x); x=gx; iter++;
+            }
+            return {root:x, iter, error:err};
+        }
+
+        function newtonRaphson(f, x0, tol=1e-5, max=50) {
+            let x=x0, iter=0, err=1, h=1e-5;
+            while(err>tol && iter<max) {
+                let fx=evalMath(f,x);
+                let dfx=(evalMath(f,x+h)-evalMath(f,x-h))/(2*h);
+                if(Math.abs(dfx)<1e-12) break;
+                let xNext=x-(fx/dfx); err=Math.abs(xNext-x); x=xNext; iter++;
+            }
+            return {root:x, iter, error:err};
+        }
+
+        function secant(f, x0, x1, tol=1e-5, max=50) {
+            let iter=0, err=1;
+            while(err>tol && iter<max) {
+                let f0=evalMath(f,x0), f1=evalMath(f,x1);
+                if(Math.abs(f1-f0)<1e-12) break;
+                let xNext=x1-f1*(x1-x0)/(f1-f0); err=Math.abs(xNext-x1); x0=x1; x1=xNext; iter++;
+            }
+            return {root:x1, iter, error:err};
         }
 
         window.onload = function() {
-            processInterpolation();
-            processRoots();
+            loadDefaultData();
+            calculateRoots();
         };
     </script>
 </body>
