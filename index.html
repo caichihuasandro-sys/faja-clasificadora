@@ -173,10 +173,10 @@
             </div>
         </div>
 
-        <!-- Pie de página Institucional -->
+        <!-- Pie de página Institucional Actualizado -->
         <footer class="bg-blue-950 text-white p-4 rounded-xl text-center text-xs space-y-1 shadow-lg border border-blue-900">
             <p><strong>Curso:</strong> Métodos Numéricos &nbsp;|&nbsp; <strong>Docente:</strong> Jesus Alfonso Milanes Fernandez</p>
-            <p><strong>Integrantes:</strong> Caichihua Sandro, Leonardo Gutierrez, Eder Apablaza, Felipe Insausti</p>
+            <p><strong>Integrantes:</strong> Tico Choque Sergio Brethis, Alvarez Hichcas Frankie Marlon, Flores Bendezu Dettmar Enrique, Caichihua Yactayo Brener Sandro</p>
             <p class="text-blue-300 text-[10px]">Universidad Nacional Mayor de San Marcos - 2026</p>
         </footer>
 
@@ -321,7 +321,7 @@
             renderChart(points, evalX, totalPx);
         }
 
-        /* DIBUJO CORREGIDO Y CONTINUO DE LA LÍNEA AZUL */
+        /* DIBUJO CONTINUO DE LA LÍNEA AZUL EN CHART.JS */
         function renderChart(points, evalX, evalY) {
             const ctx = document.getElementById('lagrangeChart').getContext('2d');
             if (lagrangeChartInstance) lagrangeChartInstance.destroy();
@@ -509,7 +509,7 @@
             return {root:c, iter, error:err};
         }
 
-        // 3. PUNTO FIJO DINÁMICO (Sin fórmulas fijas)
+        // 3. PUNTO FIJO DINÁMICO
         function fixedPoint(f, x0, tol=1e-5, max=50) {
             let h = 1e-5;
             let dfx0 = (evalMath(f, x0 + h) - evalMath(f, x0 - h)) / (2 * h);
